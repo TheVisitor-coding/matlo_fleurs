@@ -1,0 +1,77 @@
+---
+import Rose from '../assets/logo-rose.svg';
+import { site } from '../data/site';
+
+interface Props {
+  variante?: 'horizontale' | 'verticale';
+  lien?: boolean;
+}
+
+const { variante = 'horizontale', lien = true } = Astro.props;
+const Balise = lien ? 'a' : 'div';
+---
+
+<Balise class={`logo logo--${variante}`} href={lien ? '/' : undefined}>
+  <Rose class="logo__rose" aria-hidden="true" />
+  <span class="logo__mots">
+    <span class="logo__nom">{site.nom}</span>
+    <span class="logo__baseline">{site.baseline}</span>
+  </span>
+</Balise>
+
+<style>
+  /* La rose hérite de currentColor pour servir en nuit sur crème dans l'en-tête
+     et en crème sur nuit dans le pied de page, sans dupliquer le fichier. */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: currentColor;
+    text-decoration: none;
+  }
+
+  .logo--verticale {
+    flex-direction: column;
+    gap: var(--espace-1);
+    text-align: center;
+  }
+
+  .logo__rose {
+    flex: none;
+    width: 47px;
+    height: 39px;
+  }
+
+  .logo--verticale .logo__rose {
+    width: 89px;
+    height: 74px;
+  }
+
+  .logo__mots {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .logo__nom {
+    font-family: var(--famille-logotype);
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .logo--verticale .logo__nom {
+    font-size: clamp(3rem, 9vw, 5rem);
+  }
+
+  .logo__baseline {
+    font-family: var(--famille-label);
+    font-size: var(--taille-baseline);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .logo--verticale .logo__baseline {
+    font-size: var(--taille-baseline-pied);
+  }
+</style>

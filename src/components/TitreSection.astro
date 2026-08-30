@@ -1,0 +1,81 @@
+---
+interface Props {
+  ligne1: string;
+  ligne2?: string;
+  /** `script` rend la seconde ligne en Tangerine, comme le hero et le bandeau. */
+  styleLigne2?: 'titre' | 'script';
+  alignement?: 'centre' | 'gauche';
+  /** `ligne` garde les deux fragments sur la même ligne, comme les occasions. */
+  disposition?: 'empile' | 'ligne';
+  /** Sur fond nuit, l'accent passe en sauge claire. */
+  inverse?: boolean;
+}
+
+const {
+  ligne1,
+  ligne2,
+  styleLigne2 = 'titre',
+  alignement = 'centre',
+  disposition = 'empile',
+  inverse = false,
+} = Astro.props;
+
+const classes = [
+  'titre-section',
+  `titre-section--${alignement}`,
+  `titre-section--${disposition}`,
+  inverse && 'titre-section--inverse',
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<h2 class={classes}>
+  <span>{ligne1}</span>
+  {
+    ligne2 && (
+      <span class={styleLigne2 === 'script' ? 'accent titre-section__script' : 'titre-section__accent'}>
+        {ligne2}
+      </span>
+    )
+  }
+</h2>
+
+<style>
+  .titre-section--empile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .titre-section--ligne {
+    display: block;
+  }
+
+  .titre-section--ligne span + span {
+    margin-left: 0.3em;
+  }
+
+  .titre-section--centre {
+    align-items: center;
+    text-align: center;
+  }
+
+  .titre-section__accent {
+    color: var(--texte-accent);
+  }
+
+  .titre-section__script {
+    /* Le script déborde de sa boîte de ligne : la marge négative rattrape le
+       creux que laisserait l'interligne nominal. */
+    margin-top: -0.15em;
+  }
+
+  .titre-section--inverse {
+    color: var(--texte-inverse);
+  }
+
+  .titre-section--inverse .titre-section__accent,
+  .titre-section--inverse .titre-section__script {
+    color: var(--texte-accent-inverse);
+  }
+</style>

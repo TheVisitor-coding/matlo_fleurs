@@ -1,0 +1,123 @@
+---
+import { Image } from 'astro:assets';
+import TitreSection from './TitreSection.astro';
+import Bouton from './Bouton.astro';
+import placeholder from '../assets/reseaux-placeholder.png';
+import { site } from '../data/site';
+
+// docs/05 § 9 : ce block ne doit pas être mis en ligne tant qu'il n'y a pas six
+// vraies publications. Six fois la même photo est un signal pire que l'absence
+// du block. Il est monté ici pour valider la mise en page, pas pour partir tel
+// quel.
+const publications = Array.from({ length: 6 }, (_, index) => ({
+  photo: placeholder,
+  alt: `Composition florale publiée sur Instagram, visuel ${index + 1}`,
+}));
+---
+
+<section class="reseaux">
+  <div class="reseaux__wrapper">
+    <div class="reseaux__entete">
+      <div class="reseaux__intro">
+        <TitreSection ligne1="Nous suivre sur nos réseaux" alignement="gauche" />
+        <p class="reseaux__texte">
+          Nous publions sur Instagram les créations du jour, les arrivages et les coulisses de
+          la boutique. C'est le meilleur endroit pour voir ce qui est beau en ce moment.
+        </p>
+      </div>
+
+      <Bouton variante="secondaire" taille="grande" href={site.reseaux.instagram} externe>
+        Nous suivre
+      </Bouton>
+    </div>
+
+    <ul class="reseaux__grille">
+      {
+        publications.map((publication) => (
+          <li>
+            <Image
+              class="reseaux__photo"
+              src={publication.photo}
+              alt={publication.alt}
+              width={796}
+              widths={[398, 796]}
+              sizes="(max-width: 599px) 92vw, (max-width: 1023px) 46vw, 398px"
+              loading="lazy"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .reseaux {
+    padding-block: var(--espace-6);
+  }
+
+  .reseaux__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-4);
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding-inline: var(--espace-5);
+  }
+
+  .reseaux__entete {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--espace-3);
+    flex-wrap: wrap;
+  }
+
+  .reseaux__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .reseaux__texte {
+    margin: 0;
+    max-width: 557px;
+    font-weight: var(--graisse-normale);
+    font-size: var(--taille-carte);
+  }
+
+  .reseaux__grille {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--espace-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .reseaux__photo {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  @media (max-width: 1023px) {
+    .reseaux__wrapper {
+      padding-inline: var(--espace-3);
+    }
+
+    .reseaux__grille {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 599px) {
+    .reseaux__grille {
+      grid-template-columns: 1fr;
+    }
+
+    .reseaux__photo {
+      height: 240px;
+    }
+  }
+</style>

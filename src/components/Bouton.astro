@@ -1,0 +1,134 @@
+---
+import Etoile from '../assets/etoile.svg';
+
+interface Props {
+  variante?: 'primaire' | 'secondaire';
+  taille?: 'petite' | 'moyenne' | 'grande';
+  href?: string | undefined;
+  etoiles?: boolean;
+  pleineLargeur?: boolean;
+  /** Ouvre dans un nouvel onglet, pour les destinations hors du site. */
+  externe?: boolean;
+}
+
+const {
+  variante = 'primaire',
+  taille = 'petite',
+  href,
+  etoiles = variante === 'primaire',
+  pleineLargeur = false,
+  externe = false,
+} = Astro.props;
+
+// Un href signifie une navigation : c'est un lien. Sans href il n'y a rien à
+// suivre, donc un bouton, désactivé tant que le numéro réel manque.
+const Balise = href ? 'a' : 'button';
+const classes = [
+  'bouton',
+  `bouton--${variante}`,
+  `bouton--${taille}`,
+  pleineLargeur && 'bouton--pleine-largeur',
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Balise
+  class={classes}
+  href={href}
+  type={href ? undefined : 'button'}
+  disabled={href ? undefined : true}
+  target={href && externe ? '_blank' : undefined}
+  rel={href && externe ? 'noopener' : undefined}
+>
+  <span class="bouton__cadre">
+    {etoiles && <Etoile class="bouton__etoile" aria-hidden="true" />}
+    <span class="bouton__texte"><slot /></span>
+    {etoiles && <Etoile class="bouton__etoile" aria-hidden="true" />}
+  </span>
+</Balise>
+
+<style>
+  .bouton {
+    display: inline-block;
+    padding: 6px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    text-decoration: none;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .bouton:disabled {
+    cursor: default;
+  }
+
+  .bouton--pleine-largeur {
+    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .bouton__cadre {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 100%;
+    padding: 10px var(--espace-2);
+    border: var(--arche-filet) solid var(--couleur-sauge);
+  }
+
+  .bouton__texte {
+    font-family: var(--famille-titre);
+    font-size: var(--taille-bouton);
+    white-space: nowrap;
+    font-weight: var(--graisse-normale);
+    letter-spacing: var(--interlettrage-titre);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .bouton__etoile {
+    flex: none;
+    width: 9px;
+    height: 9px;
+  }
+
+  .bouton--moyenne .bouton__texte {
+    font-size: var(--taille-bouton-moyenne);
+  }
+
+  .bouton--grande .bouton__texte {
+    font-size: var(--taille-bouton-grande);
+  }
+
+  .bouton--primaire {
+    background: var(--couleur-nuit);
+    color: var(--couleur-blanc);
+  }
+
+  .bouton--secondaire {
+    border: var(--arche-filet) solid var(--couleur-sauge);
+    color: var(--couleur-sauge);
+    padding: 4px;
+  }
+
+  .bouton--secondaire .bouton__cadre {
+    padding: 10px var(--espace-4);
+  }
+
+  a.bouton:hover .bouton__cadre,
+  a.bouton:focus-visible .bouton__cadre {
+    border-color: currentColor;
+  }
+
+  a.bouton--secondaire:hover,
+  a.bouton--secondaire:focus-visible {
+    background: var(--couleur-sauge);
+    color: var(--couleur-blanc);
+  }
+</style>

@@ -1,0 +1,191 @@
+---
+import RoseEtoiles from '../assets/logo-rose-etoiles.svg';
+import IconeInstagram from '../assets/icone-instagram.svg';
+import EtoilePied from '../assets/etoile-pied.svg';
+import ArchesDecoratives from '../assets/arches-decoratives.svg';
+import { site } from '../data/site';
+
+const annee = new Date().getFullYear();
+---
+
+<footer class="pied">
+  <ArchesDecoratives class="pied__arches pied__arches--gauche" aria-hidden="true" />
+  <ArchesDecoratives class="pied__arches pied__arches--droite" aria-hidden="true" />
+
+  <div class="pied__wrapper">
+    <div class="pied__logo">
+      <RoseEtoiles class="pied__rose" aria-hidden="true" />
+      <p class="pied__nom">{site.nom}</p>
+      <p class="pied__baseline">{site.baseline}</p>
+    </div>
+
+    <ul class="pied__reseaux">
+      <li>
+        <a class="pied__reseau" href={site.reseaux.instagram} rel="me noopener" target="_blank">
+          <IconeInstagram class="pied__icone" aria-hidden="true" />
+          Instagram
+        </a>
+      </li>
+    </ul>
+
+    <hr class="pied__filet" />
+
+    <p class="pied__legal">
+      <span class="pied__copyright">© {annee} {site.nom}</span>
+      <EtoilePied class="pied__etoile" aria-hidden="true" />
+      <a href="/mentions-legales">Mentions légales</a>
+      <EtoilePied class="pied__etoile" aria-hidden="true" />
+      <a href="/politique-de-confidentialite">Politique de confidentialité</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .pied {
+    position: relative;
+    overflow: hidden;
+    background: var(--fond-inverse);
+    color: var(--texte-inverse);
+    padding-block: var(--espace-5);
+  }
+
+  .pied__wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espace-4);
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding-inline: var(--espace-3);
+  }
+
+  .pied__logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pied__rose {
+    width: 89px;
+    height: 74px;
+    color: var(--couleur-blanc);
+  }
+
+  .pied__nom {
+    margin: 0;
+    max-width: none;
+    color: var(--couleur-blanc);
+    font-family: var(--famille-logotype);
+    font-size: clamp(2.75rem, 8vw, 4rem);
+    line-height: 1.1;
+  }
+
+  .pied__baseline {
+    margin: 0;
+    max-width: none;
+    font-family: var(--famille-label);
+    font-size: var(--taille-baseline-pied);
+    letter-spacing: var(--interlettrage-label);
+    text-transform: uppercase;
+    color: var(--couleur-gris-clair);
+  }
+
+  .pied__reseaux {
+    display: flex;
+    gap: var(--espace-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pied__reseau {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px;
+    font-family: var(--famille-label);
+    font-size: var(--taille-label);
+    color: var(--couleur-taupe);
+    text-decoration: none;
+  }
+
+  .pied__reseau:hover,
+  .pied__reseau:focus-visible {
+    color: var(--texte-inverse);
+  }
+
+  .pied__icone {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pied__filet {
+    width: 300px;
+    max-width: 100%;
+    height: 1px;
+    margin: 0;
+    border: 0;
+    background: var(--couleur-filet-inverse);
+  }
+
+  .pied__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 0;
+    max-width: none;
+    font-family: var(--famille-label);
+    font-size: var(--taille-mention);
+    text-align: center;
+  }
+
+  .pied__copyright {
+    text-transform: uppercase;
+  }
+
+  .pied__legal a {
+    color: var(--texte-inverse);
+    text-decoration: none;
+  }
+
+  .pied__legal a:hover,
+  .pied__legal a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .pied__etoile {
+    width: 11px;
+    height: 12px;
+    color: var(--couleur-sauge-claire);
+  }
+
+  .pied__arches {
+    position: absolute;
+    width: 289px;
+    height: 421px;
+    color: var(--texte-inverse);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .pied__arches--gauche {
+    top: 35%;
+    left: -7.2%;
+  }
+
+  .pied__arches--droite {
+    top: -52.75%;
+    right: -7.2%;
+    scale: -1 -1;
+  }
+
+  @media (max-width: 1023px) {
+    .pied__arches {
+      display: none;
+    }
+  }
+</style>

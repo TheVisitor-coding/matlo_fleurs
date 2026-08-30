@@ -1,0 +1,74 @@
+---
+import BlockTexteImage from './BlockTexteImage.astro';
+import Bouton from './Bouton.astro';
+import Monstera from '../assets/monstera.svg';
+import photo from '../assets/atelier-stephanie.png';
+import { site } from '../data/site';
+---
+
+<div class="atelier">
+  <Monstera class="atelier__monstera" aria-hidden="true" />
+
+  <BlockTexteImage
+    id={site.ancres.atelier.slice(1)}
+    surtitre="La boutique"
+    titre={site.nom}
+    image={photo}
+    alt={`${site.fleuriste} composant un bouquet dans la boutique de Challans`}
+    cote="gauche"
+    hauteurImage={521}
+  >
+    <p>
+      Vous connaissiez peut-être déjà cette boutique. Elle change de mains, pas d'esprit.
+    </p>
+    <p>
+      Je m'appelle {site.fleuriste}, et j'y compose désormais chaque jour des fleurs choisies
+      pour leur saison, dans un métier que j'exerce comme un artisanat : à la main, une
+      création à la fois, jamais deux fois la même.
+    </p>
+    <p>
+      Ce qui ne change pas : l'adresse, le numéro de téléphone, et l'habitude de pousser cette
+      porte pour un bouquet de dernière minute. Ce qui change : un nom, une maison à moi, et
+      une façon de travailler qui suit ce que la saison donne plutôt qu'un catalogue.
+    </p>
+    <p>
+      Les fleurs arrivent plusieurs fois par semaine. C'est ce qui me permet de vous dire, en
+      vous regardant, ce qui est beau aujourd'hui et ce qui tiendra le mieux chez vous. Une
+      fleur de saison coûte moins cher, dure plus longtemps, et sent quelque chose.
+    </p>
+    <p>
+      Bouquets du quotidien, mariages, deuils, abonnements : la boutique est ouverte du mardi
+      au dimanche matin. Passez, même sans idée précise. C'est souvent comme ça que naissent
+      les plus beaux bouquets.
+    </p>
+
+    <Bouton slot="cta" variante="secondaire" href={site.ancres.boutique}>
+      Venir à la boutique
+    </Bouton>
+  </BlockTexteImage>
+</div>
+
+<style>
+  .atelier {
+    position: relative;
+    overflow: hidden;
+    background: var(--fond-creme);
+  }
+
+  .atelier__monstera {
+    position: absolute;
+    top: 21px;
+    right: -60px;
+    width: 167px;
+    height: 226px;
+    rotate: -113.9deg;
+    color: var(--couleur-sauge);
+    pointer-events: none;
+  }
+
+  @media (max-width: 1023px) {
+    .atelier__monstera {
+      display: none;
+    }
+  }
+</style>

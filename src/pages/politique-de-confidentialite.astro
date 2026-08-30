@@ -1,0 +1,69 @@
+---
+import PageTexte from '../layouts/PageTexte.astro';
+import { site } from '../data/site';
+
+const titre = `Politique de confidentialité · ${site.nom}`;
+const description = `Comment ${site.nom} traite les données transmises par le formulaire de contact.`;
+const manquant = (quoi: string) => `[À COMPLÉTER : ${quoi}]`;
+---
+
+<PageTexte
+  titre={titre}
+  description={description}
+  chemin="/politique-de-confidentialite"
+  h1="Politique de confidentialité"
+>
+  <h2>Responsable du traitement</h2>
+  <p>
+    {site.nom}, {site.adresse.ligne1}, {site.adresse.codePostal} {site.adresse.ville}.
+    Pour toute question sur vos données : {manquant('adresse de contact')}.
+  </p>
+
+  <h2>Quelles données nous recueillons</h2>
+  <p>
+    Uniquement celles que vous saisissez dans le formulaire de contact : nom et prénom,
+    téléphone, adresse électronique si vous la renseignez, nature de votre demande, date
+    souhaitée et contenu de votre message.
+  </p>
+  <p>
+    Nous ne recueillons aucune autre donnée. Le site ne dépose pas de cookie publicitaire et
+    n'utilise aucun traceur à des fins de profilage.
+  </p>
+
+  <h2>Pourquoi nous les recueillons</h2>
+  <p>
+    Pour répondre à votre demande, établir un devis et vous rappeler. La base légale est votre
+    consentement, matérialisé par l'envoi du formulaire, et l'intérêt légitime de répondre à
+    une sollicitation commerciale que vous avez initiée.
+  </p>
+
+  <h2>Combien de temps nous les conservons</h2>
+  <p>
+    Les messages sont conservés {manquant('durée de conservation retenue, par exemple 12 mois')}
+    après le dernier échange, puis supprimés.
+  </p>
+
+  <h2>Qui y a accès</h2>
+  <p>
+    {site.fleuriste} seule. Vos données ne sont ni vendues, ni louées, ni transmises à des fins
+    commerciales. Elles transitent techniquement par notre hébergeur, Infomaniak Network SA,
+    en Suisse, qui agit comme sous-traitant et n'y accède pas.
+  </p>
+
+  <h2>Vos droits</h2>
+  <p>
+    Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation et
+    d'opposition sur vos données. Pour l'exercer, écrivez-nous à {manquant('adresse de contact')}
+    ou appelez le {site.telephone.affiche}. Nous répondons dans un délai d'un mois.
+  </p>
+  <p>
+    Si notre réponse ne vous satisfait pas, vous pouvez saisir la Commission nationale de
+    l'informatique et des libertés (CNIL), 3 place de Fontenoy, 75334 Paris Cedex 07,
+    <a href="https://www.cnil.fr" rel="noopener" target="_blank">cnil.fr</a>.
+  </p>
+
+  <h2>Mesure d'audience</h2>
+  <p>
+    {manquant('outil de mesure retenu et mention de son caractère sans cookie, ou suppression de cette section')}
+  </p>
+</PageTexte>

@@ -1,0 +1,205 @@
+---
+import Etoile from '../assets/etoile.svg';
+
+const demandes = [
+  'Un bouquet, une composition',
+  'Un mariage',
+  'Des fleurs de deuil',
+  'Un abonnement floral',
+  'Autre',
+];
+---
+
+<form class="formulaire" action="/api/contact.php" method="post" id="formulaire">
+  <p class="formulaire__ligne">
+    <label class="formulaire__label" for="nom">Nom et prénom <span aria-hidden="true">*</span></label>
+    <input class="formulaire__champ" type="text" id="nom" name="nom" required autocomplete="name" />
+  </p>
+
+  <p class="formulaire__ligne">
+    <label class="formulaire__label" for="telephone">
+      Téléphone <span aria-hidden="true">*</span>
+    </label>
+    <input
+      class="formulaire__champ"
+      type="tel"
+      id="telephone"
+      name="telephone"
+      required
+      autocomplete="tel"
+      inputmode="tel"
+    />
+  </p>
+
+  <p class="formulaire__ligne">
+    <label class="formulaire__label" for="email">E-mail</label>
+    <input class="formulaire__champ" type="email" id="email" name="email" autocomplete="email" />
+  </p>
+
+  <fieldset class="formulaire__ligne formulaire__demandes">
+    <legend class="formulaire__label">Votre demande <span aria-hidden="true">*</span></legend>
+    <span class="formulaire__choix">
+      {
+        demandes.map((demande, index) => (
+          <label class="formulaire__choix-item">
+            <input type="radio" name="demande" value={demande} required={index === 0} />
+            {demande}
+          </label>
+        ))
+      }
+    </span>
+  </fieldset>
+
+  <p class="formulaire__ligne">
+    <label class="formulaire__label" for="date">Pour quelle date ?</label>
+    <input class="formulaire__champ" type="text" id="date" name="date" placeholder="jj/mm/aaaa" />
+  </p>
+
+  <p class="formulaire__ligne">
+    <label class="formulaire__label" for="message">
+      Votre message <span aria-hidden="true">*</span>
+    </label>
+    <textarea class="formulaire__champ" id="message" name="message" rows="4" required></textarea>
+  </p>
+
+  <p class="formulaire__leurre" aria-hidden="true">
+    <label for="site-web">Ne pas remplir</label>
+    <input type="text" id="site-web" name="site_web" tabindex="-1" autocomplete="off" />
+  </p>
+
+  <div class="formulaire__envoi">
+    <button class="formulaire__bouton" type="submit" aria-describedby="formulaire-rgpd">
+      <Etoile class="formulaire__etoile" aria-hidden="true" />
+      <span>Envoyer</span>
+      <Etoile class="formulaire__etoile" aria-hidden="true" />
+    </button>
+
+    <p class="formulaire__rgpd" id="formulaire-rgpd">
+      Vos coordonnées servent uniquement à répondre à votre demande. Elles ne sont ni revendues
+      ni utilisées à d'autres fins. Voir notre <a href="/politique-de-confidentialite">politique
+      de confidentialité</a>.
+    </p>
+  </div>
+</form>
+
+<style>
+  .formulaire {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-3);
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .formulaire__ligne {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: start;
+    gap: var(--espace-2);
+    margin: 0;
+    max-width: none;
+    padding: 0;
+    border: 0;
+  }
+
+  .formulaire__label {
+    font-family: var(--famille-label);
+    font-size: var(--taille-label);
+    padding-top: 12px;
+  }
+
+  .formulaire__champ {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px var(--espace-2);
+    background: var(--couleur-blanc);
+    border: var(--arche-filet) solid var(--couleur-sauge);
+    color: var(--texte);
+    font-family: var(--famille-corps);
+    font-weight: var(--graisse-corps);
+    font-size: var(--taille-corps);
+  }
+
+  textarea.formulaire__champ {
+    resize: vertical;
+  }
+
+  .formulaire__choix {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-1);
+  }
+
+  .formulaire__choix-item {
+    display: flex;
+    align-items: center;
+    gap: var(--espace-1);
+    min-height: 44px;
+    font-size: var(--taille-corps);
+  }
+
+  .formulaire__choix-item input {
+    accent-color: var(--couleur-sauge);
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Piège à robots : masqué à l'écran comme aux lecteurs d'écran, un envoi qui le
+     remplit est rejeté côté serveur. */
+  .formulaire__leurre {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .formulaire__envoi {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-2);
+    align-items: flex-start;
+  }
+
+  .formulaire__bouton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 16px var(--espace-4);
+    background: var(--couleur-nuit);
+    border: var(--arche-filet) solid var(--couleur-sauge);
+    outline-offset: 6px;
+    color: var(--couleur-creme);
+    font-family: var(--famille-titre);
+    font-size: var(--taille-bouton-moyenne);
+    letter-spacing: var(--interlettrage-titre);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .formulaire__etoile {
+    flex: none;
+    width: 9px;
+    height: 9px;
+  }
+
+  .formulaire__rgpd {
+    margin: 0;
+    max-width: 60ch;
+    font-size: var(--taille-carte);
+    color: var(--texte-accent);
+  }
+
+  @media (max-width: 699px) {
+    .formulaire__ligne {
+      grid-template-columns: 1fr;
+      gap: var(--espace-1);
+    }
+
+    .formulaire__label {
+      padding-top: 0;
+    }
+  }
+</style>

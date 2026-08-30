@@ -1,0 +1,139 @@
+---
+import { Image } from 'astro:assets';
+import Bouton from './Bouton.astro';
+import FormulaireContact from './FormulaireContact.astro';
+import { site } from '../data/site';
+import decor1 from '../assets/cta-1.png';
+import decor2 from '../assets/cta-2.png';
+import decor3 from '../assets/cta-3.png';
+import decor4 from '../assets/cta-4.png';
+
+const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined;
+
+const decors = [
+  { src: decor1, largeur: 303, hauteur: 337, style: 'left: -108px; top: -63px' },
+  { src: decor2, largeur: 321, hauteur: 353, style: 'left: 943px; top: 239px' },
+  { src: decor3, largeur: 427, hauteur: 204, style: 'left: -19px; top: 391px' },
+  { src: decor4, largeur: 447, hauteur: 231, style: 'left: 760px; top: -125px' },
+];
+---
+
+<section class="cta" id={site.ancres.contact.slice(1)}>
+  <div class="cta__scene">
+    {
+      decors.map((decor) => (
+        <Image
+          class="cta__decor"
+          style={decor.style}
+          src={decor.src}
+          alt=""
+          width={decor.largeur * 2}
+          widths={[decor.largeur, decor.largeur * 2]}
+          sizes={`${decor.largeur}px`}
+          loading="lazy"
+          aria-hidden="true"
+        />
+      ))
+    }
+
+    <div class="cta__centre">
+      <h2 class="cta__titre">Une envie, une date, une question ?</h2>
+      <p class="cta__sous-titre">
+        Passez à la boutique, ou appelez-nous. On compose avec vous.
+      </p>
+
+      <div class="cta__actions">
+        <Bouton taille="moyenne" href={telephone}>Nous appeler</Bouton>
+        <Bouton variante="secondaire" taille="moyenne" href="#formulaire">Nous écrire</Bouton>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta__formulaire">
+    <FormulaireContact />
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: var(--espace-6);
+  }
+
+  .cta__scene {
+    position: relative;
+    /* Les visuels décoratifs débordent du cadre de la maquette : sans clipping
+       ils recouvriraient les sections voisines. */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 531px;
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding-inline: var(--espace-5);
+  }
+
+  .cta__decor {
+    position: absolute;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+  }
+
+  .cta__centre {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espace-3);
+    text-align: center;
+  }
+
+  .cta__titre {
+    font-size: var(--taille-h2-cta);
+  }
+
+  .cta__sous-titre {
+    margin: 0;
+    max-width: none;
+    font-weight: var(--graisse-normale);
+    font-size: var(--taille-sous-titre);
+  }
+
+  .cta__actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .cta__formulaire {
+    display: flex;
+    justify-content: center;
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding-inline: var(--espace-5);
+  }
+
+  @media (max-width: 1023px) {
+    .cta__scene,
+    .cta__formulaire {
+      padding-inline: var(--espace-3);
+    }
+
+    .cta__scene {
+      min-height: 0;
+      padding-block: var(--espace-4);
+    }
+
+    .cta__decor {
+      display: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .cta__actions {
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+</style>

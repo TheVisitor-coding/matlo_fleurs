@@ -1,0 +1,18 @@
+---
+import PageTexte from '../layouts/PageTexte.astro';
+import { site } from '../data/site';
+---
+
+<PageTexte
+  titre={`Page introuvable · ${site.nom}`}
+  description="Cette page n'existe pas ou plus."
+  chemin="/404"
+  h1="Cette page n'existe pas"
+  noindex
+>
+  <p>
+    Le lien que vous avez suivi ne mène à rien. Tout le site tient pour l'instant sur une
+    seule page.
+  </p>
+  <p><a href="/">Revenir à l'accueil</a></p>
+</PageTexte>

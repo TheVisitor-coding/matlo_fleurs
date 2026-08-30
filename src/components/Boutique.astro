@@ -1,0 +1,210 @@
+---
+import { Image } from 'astro:assets';
+import TitreSection from './TitreSection.astro';
+import Bouton from './Bouton.astro';
+import IconeAdresse from '../assets/icone-adresse.svg';
+import IconeHoraires from '../assets/icone-horaires.svg';
+import IconeTelephone from '../assets/icone-telephone.svg';
+import carte from '../assets/carte-placeholder.png';
+import { site } from '../data/site';
+
+const requete = encodeURIComponent(
+  `${site.nom}, ${site.adresse.ligne1}, ${site.adresse.codePostal} ${site.adresse.ville}`,
+);
+const plan = `https://www.google.com/maps/search/?api=1&query=${requete}`;
+---
+
+<section class="boutique" id={site.ancres.boutique.slice(1)}>
+  <div class="boutique__wrapper">
+    <TitreSection ligne1={`Notre boutique à ${site.adresse.ville} : adresse et horaires`} />
+
+    <div class="boutique__colonnes">
+      <div class="boutique__carte">
+        <Image
+          class="boutique__carte-image"
+          src={carte}
+          alt={`Plan de situation de la boutique, ${site.adresse.ligne1} à ${site.adresse.ville}`}
+          width={1144}
+          widths={[572, 1144]}
+          sizes="(max-width: 899px) 92vw, 572px"
+          loading="lazy"
+        />
+        <span class="boutique__plan">
+          <Bouton href={plan} externe>Ouvrir le plan</Bouton>
+        </span>
+      </div>
+
+      <div class="boutique__infos">
+        <div class="boutique__groupe">
+          <IconeAdresse class="boutique__icone" aria-hidden="true" />
+          <address class="boutique__adresse">
+            <span>{site.adresse.ligne1}</span>
+            <span>{site.adresse.codePostal} {site.adresse.ville}</span>
+          </address>
+        </div>
+
+        <div class="boutique__groupe">
+          <IconeHoraires class="boutique__icone" aria-hidden="true" />
+          <table class="boutique__horaires">
+            <caption class="hors-ecran">Horaires d'ouverture</caption>
+            <tbody>
+              {
+                site.horaires.map((jour) => (
+                  <tr data-jour={jour.iso}>
+                    <th scope="row">{jour.jour}</th>
+                    <td>{jour.plages.length > 0 ? jour.plages.join(' · ') : 'fermé'}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="boutique__groupe boutique__groupe--tel">
+          <IconeTelephone class="boutique__icone" aria-hidden="true" />
+          {
+            site.telephone.lien ? (
+              <a class="boutique__tel" href={`tel:${site.telephone.lien}`}>
+                {site.telephone.affiche}
+              </a>
+            ) : (
+              <span class="boutique__tel">{site.telephone.affiche}</span>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { maintenantBoutique } from '../lib/horaires';
+
+  const { iso } = maintenantBoutique(new Date());
+  document
+    .querySelector(`.boutique__horaires tr[data-jour="${iso}"]`)
+    ?.classList.add('boutique__jour--courant');
+</script>
+
+<style>
+  .boutique {
+    padding-block: var(--espace-6);
+  }
+
+  .boutique__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-4);
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding-inline: var(--espace-5);
+  }
+
+  .boutique__colonnes {
+    display: grid;
+    grid-template-columns: 572fr 626fr;
+    align-items: center;
+    gap: 42px;
+  }
+
+  .boutique__carte {
+    position: relative;
+    height: 402px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .boutique__carte-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .boutique__plan {
+    position: absolute;
+    right: var(--espace-2);
+    bottom: var(--espace-2);
+  }
+
+  .boutique__infos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .boutique__groupe {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .boutique__groupe--tel {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .boutique__icone {
+    width: 24px;
+    height: 24px;
+    color: var(--couleur-sauge);
+  }
+
+  .boutique__adresse {
+    display: flex;
+    flex-direction: column;
+    padding-inline: 8px;
+    font-family: var(--famille-label);
+    font-size: var(--taille-label);
+  }
+
+  .boutique__horaires {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--famille-label);
+    font-size: var(--taille-label);
+  }
+
+  .boutique__horaires th,
+  .boutique__horaires td {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--couleur-filet);
+    font-weight: var(--graisse-normale);
+  }
+
+  .boutique__horaires th {
+    text-align: left;
+  }
+
+  .boutique__horaires td {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .boutique__jour--courant th,
+  .boutique__jour--courant td {
+    color: var(--texte-accent);
+  }
+
+  .boutique__tel {
+    font-family: var(--famille-label);
+    font-size: var(--taille-telephone);
+    color: var(--texte);
+    text-decoration: none;
+  }
+
+  @media (max-width: 899px) {
+    .boutique__wrapper {
+      padding-inline: var(--espace-3);
+    }
+
+    .boutique__colonnes {
+      grid-template-columns: 1fr;
+      gap: var(--espace-4);
+    }
+
+    .boutique__carte {
+      height: 280px;
+    }
+  }
+</style>

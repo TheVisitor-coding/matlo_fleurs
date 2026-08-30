@@ -1,0 +1,99 @@
+---
+import { Font } from 'astro:assets';
+import RoseEtoiles from '../assets/logo-rose-etoiles.svg';
+import ArchesDecoratives from '../assets/arches-decoratives.svg';
+import { site, adresseCourte } from '../data/site';
+import '../styles/tokens.css';
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Carte de partage</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <Font cssVariable="--police-titre" preload />
+    <Font cssVariable="--police-label" preload />
+    <Font cssVariable="--police-logotype" preload />
+  </head>
+  <body>
+    <div class="carte">
+      <ArchesDecoratives class="carte__arches carte__arches--gauche" aria-hidden="true" />
+      <ArchesDecoratives class="carte__arches carte__arches--droite" aria-hidden="true" />
+
+      <RoseEtoiles class="carte__rose" aria-hidden="true" />
+      <p class="carte__nom">{site.nom}</p>
+      <p class="carte__baseline">{site.baseline}</p>
+      <p class="carte__lieu">{adresseCourte}</p>
+    </div>
+
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .carte {
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 1200px;
+        height: 630px;
+        background: var(--couleur-nuit);
+        color: var(--couleur-blanc);
+      }
+
+      .carte__rose {
+        width: 150px;
+        height: 125px;
+        color: var(--couleur-blanc);
+      }
+
+      .carte__nom {
+        margin: 8px 0 0;
+        font-family: var(--police-logotype);
+        font-size: 132px;
+        line-height: 1;
+      }
+
+      .carte__baseline {
+        margin: 12px 0 0;
+        font-family: var(--police-label);
+        font-size: 26px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--couleur-gris-clair);
+      }
+
+      .carte__lieu {
+        margin: 40px 0 0;
+        font-family: var(--police-titre);
+        font-size: 24px;
+        letter-spacing: 0.08em;
+        color: var(--couleur-sauge-claire);
+      }
+
+      .carte__arches {
+        position: absolute;
+        width: 420px;
+        height: 610px;
+        color: var(--couleur-blanc);
+        opacity: 0.28;
+      }
+
+      .carte__arches--gauche {
+        top: 180px;
+        left: -150px;
+      }
+
+      .carte__arches--droite {
+        top: -160px;
+        right: -150px;
+        scale: -1 -1;
+      }
+    </style>
+  </body>
+</html>

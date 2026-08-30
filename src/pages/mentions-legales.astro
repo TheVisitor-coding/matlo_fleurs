@@ -1,0 +1,50 @@
+---
+import PageTexte from '../layouts/PageTexte.astro';
+import { site, adresseComplete } from '../data/site';
+
+const titre = `Mentions légales · ${site.nom}`;
+const description = `Mentions légales du site ${site.nom}, artisan fleuriste à ${site.adresse.ville}.`;
+const manquant = (quoi: string) => `[À COMPLÉTER : ${quoi}]`;
+---
+
+<PageTexte titre={titre} description={description} chemin="/mentions-legales" h1="Mentions légales">
+  <h2>Éditeur du site</h2>
+  <p>
+    {site.nom}, {manquant('forme juridique')}<br />
+    Siège social : {adresseComplete.replace('\n', ', ')}<br />
+    {manquant('numéro SIREN ou SIRET')}<br />
+    {manquant('numéro de TVA intracommunautaire, ou mention de non-assujettissement')}<br />
+    Téléphone : {site.telephone.affiche}<br />
+    Courriel : {manquant('adresse de contact')}
+  </p>
+
+  <h2>Responsable de la publication</h2>
+  <p>{site.fleuriste} {manquant('nom de famille')}</p>
+
+  <h2>Hébergeur</h2>
+  <p>
+    Infomaniak Network SA<br />
+    Rue Eugène-Marziano 25, 1227 Les Acacias, Genève, Suisse<br />
+    +41 22 820 35 44
+  </p>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>
+    L'ensemble de ce site, sa structure, ses textes, ses photographies et son identité
+    visuelle sont la propriété de {site.nom}. Toute reproduction, même partielle, est
+    interdite sans autorisation écrite préalable.
+  </p>
+
+  <h2>Données personnelles</h2>
+  <p>
+    Le traitement des données transmises par le formulaire de contact est décrit dans notre
+    <a href="/politique-de-confidentialite">politique de confidentialité</a>.
+  </p>
+
+  <h2>Médiation de la consommation</h2>
+  <p>
+    Conformément à l'article L.612-1 du code de la consommation, tout consommateur a le droit
+    de recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable
+    d'un litige. {manquant('nom et coordonnées du médiateur retenu')}
+  </p>
+</PageTexte>

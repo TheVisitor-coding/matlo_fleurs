@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import BarreInfo from '../components/BarreInfo.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Creations from '../components/Creations.astro';
+import BandeauSignature from '../components/BandeauSignature.astro';
+import Occasions from '../components/Occasions.astro';
+import Atelier from '../components/Atelier.astro';
+import Livraison from '../components/Livraison.astro';
+import Boutique from '../components/Boutique.astro';
+import Reseaux from '../components/Reseaux.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+
+const titre = "Matlo'Fleurs · Artisan fleuriste à Challans (85)";
+const description =
+  'Bouquets, compositions et plantes créés à la main à Challans. Mariage, deuil, quotidien. Livraison à 20 km, envoi partout en France. Ouvert le dimanche matin.';
+---
+
+<Base titre={titre} description={description} chemin="/" donneesStructurees>
+  <BarreInfo />
+  <Header />
+  <main>
+    <Hero />
+    <Creations />
+    <BandeauSignature />
+    <Occasions />
+    <Atelier />
+    <Livraison />
+    <Boutique />
+    <Reseaux />
+    <CtaFinal />
+  </main>
+  <PiedDePage />
+</Base>

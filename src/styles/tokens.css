@@ -1,0 +1,90 @@
+:root {
+  --couleur-blanc: #ffffff;
+  /* Crème relevé sur la maquette. L'identité print utilise #F5F0E8 : les deux
+     valeurs coexistent, le web suit la maquette. */
+  --couleur-creme: #f3ede1;
+  --couleur-nuit: #1d1e33;
+  --couleur-sauge: #5c6b4f;
+  /* Sauge éclaircie, relevée sur le bandeau : la sauge normale n'a pas assez de
+     contraste sur le fond nuit. */
+  --couleur-sauge-claire: #97ac96;
+  /* Réservée à la page /deuil, inutilisée au lancement. */
+  --couleur-ardoise: #243a47;
+  --couleur-taupe: #9a9182;
+  /* Gris du pied de page. Seule valeur froide de la palette, relevée telle
+     quelle sur la maquette. */
+  --couleur-gris-clair: #d2d2d2;
+  --couleur-filet: rgb(154 145 130 / 0.5);
+  --couleur-filet-inverse: rgb(243 237 225 / 0.2);
+
+  /* Le bronze #B8965A est abandonné : la sauge fait le travail, et deux accents
+     chaud/froid en concurrence brouilleraient la palette. */
+
+  /* La page alterne blanc et crème. Les blocks sans fond explicite dans la
+     maquette reposent sur le canevas, qui est blanc. */
+  --fond-page: var(--couleur-blanc);
+  --fond-creme: var(--couleur-creme);
+  --fond-inverse: var(--couleur-nuit);
+  --texte: var(--couleur-nuit);
+  --texte-inverse: var(--couleur-creme);
+  --texte-accent: var(--couleur-sauge);
+  --texte-accent-inverse: var(--couleur-sauge-claire);
+
+  --famille-titre: var(--police-titre);
+  --famille-corps: var(--police-corps);
+  --famille-label: var(--police-label);
+  --famille-accent: var(--police-accent);
+  --famille-logotype: var(--police-logotype);
+
+  /* Valeurs de la maquette. Elles descendent sous les planchers de lisibilité
+     de docs/04 partie D : à revoir avec la passe de correction. */
+  --taille-accent: clamp(3rem, 10vw, 4.75rem);
+  --taille-accent-bandeau: clamp(3.25rem, 11vw, 5.5rem);
+  --taille-h1: clamp(1.75rem, 5vw, 2.5rem);
+  --taille-h2: clamp(1.75rem, 4vw, 2.25rem);
+  --taille-h2-bandeau: clamp(1.75rem, 4.5vw, 2.375rem);
+  --taille-h2-bloc: clamp(1.75rem, 4.5vw, 2.375rem);
+  --taille-h3: clamp(1.5rem, 3vw, 2rem);
+  --taille-h2-cta: clamp(1.5rem, 3.5vw, 2rem);
+  --taille-corps-large: 1.5rem;
+  --taille-corps: 1.25rem;
+  --taille-sous-titre: 1.125rem;
+  --taille-carte: 1rem;
+  --taille-carte-titre: 1.5rem;
+  --taille-telephone: 1.25rem;
+  --taille-label: 1rem;
+  --taille-surtitre: 0.875rem;
+  --taille-bouton: 0.75rem;
+  --taille-bouton-moyenne: 0.875rem;
+  --taille-bouton-grande: 1rem;
+  --taille-baseline: 0.5rem;
+  --taille-baseline-pied: 0.75rem;
+  --taille-mention: 0.75rem;
+
+  --graisse-normale: 400;
+  /* Cormorant Regular est trop fin pour une cible qui monte jusqu'aux seniors. */
+  --graisse-corps: 500;
+
+  --interligne-titre: 1.15;
+  --interligne-corps: 1.3;
+  --interlettrage-titre: 0.06em;
+  --interlettrage-label: 0.12em;
+
+  --espace-1: 0.5rem;
+  --espace-2: 1rem;
+  --espace-3: 1.5rem;
+  --espace-4: 2rem;
+  --espace-5: 3rem;
+  --espace-6: 4rem;
+  --espace-7: 6rem;
+  --espace-8: 8rem;
+
+  --largeur-contenu: 1240px;
+  --largeur-texte: 68ch;
+
+  /* Motif signature : uniquement sur une image de création ou de personne. */
+  --arche-hero: 380px;
+  --arche-filet: 1px;
+  --arche-ratio-hero: 380 / 501;
+  --arche-ratio-carte: 361 / 383;
+}

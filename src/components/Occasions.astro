@@ -1,0 +1,172 @@
+---
+import { Image } from 'astro:assets';
+import TitreSection from './TitreSection.astro';
+import Bouton from './Bouton.astro';
+import { site } from '../data/site';
+import photo from '../assets/occasion-placeholder.png';
+
+const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined;
+
+const occasions = [
+  {
+    nom: 'Mariage',
+    texte:
+      'Le bouquet, les boutonnières et les fleurs des mariés, composés avec vous, pour le jour J.',
+    alt: 'Bouquet de mariée aux tons pastel tenu devant une robe blanche',
+  },
+  {
+    nom: 'Deuil',
+    ancre: site.ancres.deuil.slice(1),
+    texte:
+      "Nous composons et livrons au funérarium, à l'église, crématorium ou au cimetière, à Challans et dans les communes alentour.",
+    alt: 'Composition florale de deuil en fleurs de saison',
+  },
+  {
+    nom: 'Évènement',
+    texte:
+      "Des compositions pour vos tables et vos lieux, à votre image. Dites-nous la date, le nombre de tables et l'ambiance, nous composons en fleurs de saison.",
+    alt: 'Centre de table fleuri pour une réception',
+  },
+  {
+    nom: 'Abonnement',
+    texte:
+      'Des fleurs fraîches renouvelées chaque semaine chez vous, chez un proche ou dans un établissement. Vous choisissez le rythme et le budget, nous adaptons à la saison.',
+    alt: "Bouquet d'abonnement en fleurs de saison posé sur une table",
+  },
+];
+---
+
+<section class="occasions" id={site.ancres.occasions.slice(1)}>
+  <div class="occasions__wrapper">
+    <div class="occasions__entete">
+      <TitreSection
+        ligne1="Pour toutes les occasions"
+        ligne2="de la vie"
+        disposition="ligne"
+        alignement="gauche"
+      />
+      <Bouton href={telephone} taille="grande">Nous appeler</Bouton>
+    </div>
+
+    <ul class="occasions__liste">
+      {
+        occasions.map((occasion) => (
+          <li class="occasions__carte" id={occasion.ancre}>
+            <Image
+              class="occasions__photo"
+              src={photo}
+              alt={occasion.alt}
+              width={620}
+              widths={[310, 620]}
+              sizes="(max-width: 599px) 92vw, (max-width: 1023px) 46vw, 310px"
+              loading="lazy"
+            />
+            <div class="occasions__contenu">
+              <h3 class="occasions__nom">{occasion.nom}</h3>
+              <p class="occasions__texte">{occasion.texte}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .occasions {
+    padding-block: var(--espace-6);
+  }
+
+  .occasions__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-4);
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding-inline: var(--espace-5);
+  }
+
+  .occasions__entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espace-3);
+    flex-wrap: wrap;
+  }
+
+  .occasions__liste {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .occasions__carte {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 402px;
+    overflow: hidden;
+    /* Ancre de navigation sur la carte deuil : la marge de défilement évite que
+       l'en-tête ne recouvre le titre. */
+    scroll-margin-top: var(--espace-6);
+  }
+
+  .occasions__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .occasions__carte::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgb(0 0 0 / 0) 0%, rgb(0 0 0 / 0.5) 98%);
+  }
+
+  .occasions__contenu {
+    position: relative;
+    z-index: 1;
+    padding: var(--espace-2);
+    color: var(--couleur-blanc);
+  }
+
+  .occasions__nom {
+    margin: 0;
+    font-family: var(--famille-label);
+    font-size: var(--taille-carte-titre);
+    letter-spacing: 0;
+  }
+
+  .occasions__texte {
+    margin: 0;
+    max-width: none;
+    font-size: var(--taille-carte);
+  }
+
+  @media (max-width: 1023px) {
+    .occasions__wrapper {
+      padding-inline: var(--espace-3);
+    }
+
+    .occasions__liste {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 599px) {
+    .occasions__liste {
+      grid-template-columns: 1fr;
+    }
+
+    .occasions__carte {
+      min-height: 320px;
+    }
+  }
+</style>

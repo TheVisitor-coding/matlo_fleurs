@@ -1,0 +1,98 @@
+name: Déploiement Infomaniak
+
+# Déclenchement manuel uniquement. Tant que les mentions légales sont incomplètes
+# et que le formulaire n'a pas de destinataire, un déploiement automatique sur
+# push publierait un site non publiable. Ajouter le déclencheur `push` quand le
+# site est prêt.
+on:
+  workflow_dispatch:
+    inputs:
+      essai:
+        description: 'Simulation rsync, sans rien écrire sur le serveur'
+        type: boolean
+        default: true
+
+concurrency:
+  group: deploiement
+  cancel-in-progress: false
+
+jobs:
+  deployer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - run: npm run check
+
+      - run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+
+      # Variables à définir dans le dépôt :
+      #   secrets.SSH_CLE_PRIVEE   clé privée du compte SSH Infomaniak
+      #   vars.SSH_HOTE            hôte SSH
+      #   vars.SSH_UTILISATEUR     utilisateur SSH
+      #   vars.SSH_PORT            port SSH, 22 par défaut
+      #   vars.CHEMIN_DISTANT      racine web du site, avec un / final
+      #   vars.SSH_HOTE_CLE        empreinte publique de l'hôte (recommandé)
+      #   vars.SITE_URL            https://matlofleurs.fr
+      - name: Préparer la connexion SSH
+        env:
+          CLE: ${{ secrets.SSH_CLE_PRIVEE }}
+          HOTE: ${{ vars.SSH_HOTE }}
+          PORT: ${{ vars.SSH_PORT }}
+          HOTE_CLE: ${{ vars.SSH_HOTE_CLE }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$CLE" > ~/.ssh/id_deploiement
+          chmod 600 ~/.ssh/id_deploiement
+          if [ -n "$HOTE_CLE" ]; then
+            printf '%s\n' "$HOTE_CLE" > ~/.ssh/known_hosts
+          else
+            echo "::warning::SSH_HOTE_CLE non définie, l'empreinte de l'hôte est acceptée à l'aveugle."
+            ssh-keyscan -p "${PORT:-22}" "$HOTE" > ~/.ssh/known_hosts 2>/dev/null
+          fi
+          chmod 600 ~/.ssh/known_hosts
+
+      # --delete nettoie les fichiers retirés du site, mais .well-known doit
+      # survivre : Infomaniak y place les jetons de renouvellement de certificat.
+      - name: Publier avec rsync
+        env:
+          HOTE: ${{ vars.SSH_HOTE }}
+          UTILISATEUR: ${{ vars.SSH_UTILISATEUR }}
+          PORT: ${{ vars.SSH_PORT }}
+          CHEMIN: ${{ vars.CHEMIN_DISTANT }}
+          ESSAI: ${{ inputs.essai }}
+        run: |
+          set -euo pipefail
+          OPTIONS="-az --delete --exclude .well-known --exclude .git"
+          if [ "$ESSAI" = "true" ]; then
+            OPTIONS="$OPTIONS --dry-run --itemize-changes"
+            echo "::notice::Simulation, aucune écriture sur le serveur."
+          fi
+          rsync $OPTIONS \
+            -e "ssh -i ~/.ssh/id_deploiement -p ${PORT:-22} -o StrictHostKeyChecking=yes" \
+            dist/ "$UTILISATEUR@$HOTE:$CHEMIN"
+
+      - name: Vérifier la mise en ligne
+        if: ${{ inputs.essai == false }}
+        env:
+          SITE: ${{ vars.SITE_URL }}
+        run: |
+          set -euo pipefail
+          for chemin in / /mentions-legales /politique-de-confidentialite; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE$chemin")
+            echo "$chemin -> $code"
+            [ "$code" = "200" ] || exit 1
+          done

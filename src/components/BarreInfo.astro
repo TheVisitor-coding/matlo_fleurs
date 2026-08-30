@@ -1,0 +1,87 @@
+---
+// Le rendu serveur porte une formulation toujours vraie, que le script remplace
+// par la phrase du jour.
+import { site, adresseCourte } from '../data/site';
+
+const horaires = site.horaires.map((j) => ({ iso: j.iso, plages: j.plages }));
+---
+
+<div class="barre-info">
+  <p class="barre-info__ligne">
+    <span class="barre-info__item" data-horaire data-horaires={JSON.stringify(horaires)}>
+      Ouvert du mardi au dimanche matin
+    </span>
+    <span class="barre-info__separateur" aria-hidden="true">·</span>
+    <span class="barre-info__item barre-info__item--adresse">{adresseCourte}</span>
+    <span class="barre-info__separateur" aria-hidden="true">·</span>
+    {
+      site.telephone.lien ? (
+        <a class="barre-info__item barre-info__tel" href={`tel:${site.telephone.lien}`}>
+          {site.telephone.affiche}
+        </a>
+      ) : (
+        <span class="barre-info__item">{site.telephone.affiche}</span>
+      )
+    }
+  </p>
+</div>
+
+<script>
+  import { phraseOuverture, type JourOuverture } from '../lib/horaires';
+
+  const cible = document.querySelector<HTMLElement>('[data-horaire]');
+  const brut = cible?.dataset.horaires;
+
+  if (cible && brut) {
+    const phrase = phraseOuverture(JSON.parse(brut) as JourOuverture[]);
+    if (phrase) cible.textContent = phrase;
+  }
+</script>
+
+<style>
+  .barre-info {
+    background: var(--couleur-nuit);
+    color: var(--texte-inverse);
+    /* Hauteur fixe : sans elle, le remplacement du texte par le script
+       décalerait la mise en page. */
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--espace-2);
+  }
+
+  .barre-info__ligne {
+    margin: 0;
+    max-width: none;
+    display: flex;
+    align-items: center;
+    gap: var(--espace-2);
+    font-family: var(--famille-label);
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .barre-info__separateur {
+    color: var(--couleur-sauge);
+  }
+
+  .barre-info__tel {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .barre-info__tel:hover,
+  .barre-info__tel:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* L'adresse tombe, l'horaire et le téléphone restent. */
+  @media (max-width: 700px) {
+    .barre-info__item--adresse,
+    .barre-info__item--adresse + .barre-info__separateur {
+      display: none;
+    }
+  }
+</style>

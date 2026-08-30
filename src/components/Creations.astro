@@ -1,0 +1,118 @@
+---
+import Arche from './Arche.astro';
+import TitreSection from './TitreSection.astro';
+import { site } from '../data/site';
+import bouquets from '../assets/creation-bouquets.png';
+import fleursSechees from '../assets/creation-fleurs-sechees.png';
+import plantes from '../assets/creation-plantes.png';
+
+const univers = [
+  {
+    nom: 'Bouquets',
+    photo: bouquets,
+    alt: "Bouquet champêtre emballé dans du papier kraft, tenu à bout de bras dans l'atelier",
+    texte:
+      "À offrir ou à s'offrir, composés à la demande avec les fleurs arrivées le matin. Vous nous dites l'occasion et le budget, nous composons devant vous.",
+  },
+  {
+    nom: 'Fleurs séchées',
+    photo: fleursSechees,
+    alt: 'Composition de fleurs séchées, graminées et immortelles dans des tons naturels',
+    texte:
+      'Des bouquets qui traversent les saisons. Graminées, immortelles, eucalyptus : des compositions qui gardent leur tenue des mois durant, sans aucun entretien.',
+  },
+  {
+    nom: 'Plantes',
+    photo: plantes,
+    alt: "Plantes vertes d'intérieur en pots de terre cuite dans la boutique",
+    texte:
+      "Vertes, fleuries, d'intérieur et d'extérieur. Choisies pour tenir chez vous, avec les conseils d'entretien qui vont avec, en pot simple ou en cache-pot assorti.",
+  },
+];
+---
+
+<section class="creations" id={site.ancres.creations.slice(1)}>
+  <div class="creations__wrapper">
+    <TitreSection ligne1="Nos créations, composées" ligne2="chaque jour à l'atelier" />
+
+    <ul class="creations__liste">
+      {
+        univers.map((item) => (
+          <li class="creations__carte">
+            <Arche
+              src={item.photo}
+              alt={item.alt}
+              largeurRendu={361}
+              sizes="(max-width: 767px) 92vw, (max-width: 1199px) 45vw, 361px"
+            />
+            <h3 class="creations__nom">{item.nom}</h3>
+            <p class="creations__texte">{item.texte}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .creations {
+    padding-block: var(--espace-6);
+  }
+
+  .creations__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-4);
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding-inline: var(--espace-5);
+  }
+
+  .creations__liste {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 54px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .creations__carte {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espace-2);
+    text-align: center;
+  }
+
+  .creations__nom {
+    margin: 0;
+  }
+
+  /* Les retours à la ligne de la maquette ne sont pas repris : ils viennent de
+     la largeur du bloc de texte, les forcer casserait le rendu mobile. */
+  .creations__texte {
+    margin: 0;
+    max-width: none;
+    font-size: var(--taille-carte);
+    color: var(--texte-accent);
+  }
+
+  @media (max-width: 1199px) {
+    .creations__liste {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--espace-5);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .creations__wrapper {
+      padding-inline: var(--espace-3);
+    }
+
+    .creations__liste {
+      grid-template-columns: 1fr;
+      gap: var(--espace-5);
+    }
+  }
+</style>

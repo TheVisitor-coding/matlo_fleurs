@@ -1,0 +1,30 @@
+---
+import BlockTexteImage from './BlockTexteImage.astro';
+import Bouton from './Bouton.astro';
+import illustration from '../assets/livraison-illustration.png';
+import { site } from '../data/site';
+
+const { communes, rayonKm, partenaireNational } = site.livraison;
+const listeCommunes = `${communes.slice(0, -1).join(', ')} et ${communes.at(-1)}`;
+const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined;
+
+// Phrases assemblées ici : une expression en fin de ligne perd l'espace qui la
+// précède au moment de la compilation du gabarit.
+const livraisonLocale = `Nous livrons en personne à ${site.adresse.ville} et dans un rayon de ${rayonKm} km : ${listeCommunes}.`;
+const livraisonNationale = `Et partout ailleurs en France, nous expédions vos fleurs par le réseau ${partenaireNational} : un fleuriste local les compose et les livre à votre place, où que soit la personne.`;
+---
+
+<BlockTexteImage
+  surtitre="Livraison"
+  titre="Où nous livrons vos fleurs autour de Challans"
+  image={illustration}
+  alt="Illustration du parcours d'un bouquet, de la boutique à la personne qui le reçoit"
+  cote="droite"
+  hauteurImage={402}
+  tailleTitre="var(--taille-h2)"
+>
+  <p>{livraisonLocale}</p>
+  <p>{livraisonNationale}</p>
+
+  <Bouton slot="cta" taille="moyenne" href={telephone}>Nous appeler</Bouton>
+</BlockTexteImage>

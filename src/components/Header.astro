@@ -1,0 +1,253 @@
+---
+import Logo from './Logo.astro';
+import Bouton from './Bouton.astro';
+import { site, adresseComplete } from '../data/site';
+
+// Libellés définitifs de docs/05 § 1, pas ceux de la maquette qui sont périmés.
+// Mariage et Deuil sont dans la navigation parce que ce sont les deux intentions
+// qui rapportent : les enterrer dans un libellé générique revient à les perdre.
+const entrees = [
+  { libelle: 'Nos créations', href: site.ancres.creations },
+  { libelle: 'Mariage', href: site.ancres.occasions },
+  { libelle: 'Deuil', href: site.ancres.deuil },
+  { libelle: "L'atelier", href: site.ancres.atelier },
+  { libelle: 'Contact', href: site.ancres.contact },
+] as const;
+
+const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined;
+---
+
+<header class="entete" data-entete>
+  <div class="entete__wrapper">
+    <Logo variante="horizontale" />
+
+    <div class="entete__groupe">
+      <nav class="entete__nav" id="menu-principal" aria-label="Navigation principale">
+        <ul class="entete__liens">
+          {
+            entrees.map((entree) => (
+              <li>
+                <a class="entete__lien" href={entree.href}>{entree.libelle}</a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="entete__panneau-pied">
+          <Bouton href={telephone} pleineLargeur>{site.telephone.affiche}</Bouton>
+          <address class="entete__adresse">{adresseComplete}</address>
+          <a class="entete__reseau" href={site.reseaux.instagram} rel="me noopener" target="_blank">
+            Instagram
+          </a>
+        </div>
+      </nav>
+
+      <div class="entete__cta">
+        <Bouton href={telephone} taille="moyenne">{site.telephone.affiche}</Bouton>
+      </div>
+
+      <button
+        class="entete__burger"
+        type="button"
+        aria-expanded="false"
+        aria-controls="menu-principal"
+        data-burger
+      >
+        <span class="hors-ecran">Ouvrir le menu</span>
+        <span class="entete__barre" aria-hidden="true"></span>
+        <span class="entete__barre" aria-hidden="true"></span>
+        <span class="entete__barre" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const entete = document.querySelector<HTMLElement>('[data-entete]');
+  const burger = document.querySelector<HTMLButtonElement>('[data-burger]');
+  const libelle = burger?.querySelector('.hors-ecran');
+
+  if (entete && burger && libelle) {
+    const basculer = (ouvert: boolean) => {
+      entete.classList.toggle('entete--ouvert', ouvert);
+      burger.setAttribute('aria-expanded', String(ouvert));
+      libelle.textContent = ouvert ? 'Fermer le menu' : 'Ouvrir le menu';
+      document.body.style.overflow = ouvert ? 'hidden' : '';
+    };
+
+    burger.addEventListener('click', () => {
+      basculer(burger.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('keydown', (evenement) => {
+      if (evenement.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+        basculer(false);
+        burger.focus();
+      }
+    });
+
+    entete.querySelectorAll('.entete__lien').forEach((lien) => {
+      lien.addEventListener('click', () => basculer(false));
+    });
+  }
+</script>
+
+<style>
+  .entete {
+    background: var(--fond-creme);
+  }
+
+  .entete__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espace-4);
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+    padding: 10px var(--espace-5);
+    min-height: 88px;
+  }
+
+  .entete__groupe {
+    display: flex;
+    align-items: center;
+    gap: 42px;
+  }
+
+  .entete__nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .entete__liens {
+    display: flex;
+    align-items: center;
+    gap: var(--espace-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .entete__lien {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--texte);
+    font-family: var(--famille-label);
+    font-size: var(--taille-label);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .entete__lien:hover,
+  .entete__lien:focus-visible {
+    color: var(--texte-accent);
+  }
+
+  .entete__panneau-pied,
+  .entete__burger {
+    display: none;
+  }
+
+  @media (max-width: 1023px) {
+    .entete__wrapper {
+      padding-inline: var(--espace-3);
+      min-height: 72px;
+    }
+
+    .entete__nav {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      overflow-y: auto;
+      padding: var(--espace-6) var(--espace-3) var(--espace-4);
+      background: var(--fond-inverse);
+      color: var(--texte-inverse);
+      translate: 0 -100%;
+      visibility: hidden;
+      transition: translate 0.25s ease, visibility 0.25s;
+    }
+
+    .entete--ouvert .entete__nav {
+      translate: 0 0;
+      visibility: visible;
+    }
+
+    .entete__liens {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .entete__lien {
+      justify-content: center;
+      padding-block: var(--espace-3);
+      border-bottom: var(--arche-filet) solid var(--couleur-sauge);
+      color: var(--texte-inverse);
+      font-family: var(--famille-titre);
+      letter-spacing: var(--interlettrage-titre);
+      text-transform: uppercase;
+    }
+
+    .entete__panneau-pied {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--espace-3);
+      margin-top: var(--espace-5);
+      text-align: center;
+    }
+
+    .entete__adresse {
+      white-space: pre-line;
+      font-size: var(--taille-corps);
+    }
+
+    .entete__reseau {
+      color: var(--texte-inverse);
+    }
+
+    .entete__burger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      position: relative;
+      z-index: 11;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .entete__barre {
+      display: block;
+      height: 2px;
+      border-radius: 1000px;
+      background: var(--couleur-nuit);
+      transition: background 0.25s;
+    }
+
+    .entete--ouvert .entete__barre {
+      background: var(--couleur-creme);
+    }
+  }
+
+  /* Le bouton téléphone du header ne tient pas sur un mobile à côté du logo et
+     du burger. Le numéro reste atteignable en un geste dans la barre
+     d'information, et en tête du menu ouvert. */
+  @media (max-width: 700px) {
+    .entete__cta {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .entete__nav {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /message-envoye
+Disallow: /api/
+Disallow: /og
+
+Sitemap: https://matlofleurs.fr/sitemap-index.xml

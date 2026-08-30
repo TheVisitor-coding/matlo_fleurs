@@ -1,0 +1,58 @@
+---
+import Base from './Base.astro';
+import BarreInfo from '../components/BarreInfo.astro';
+import Header from '../components/Header.astro';
+import PiedDePage from '../components/PiedDePage.astro';
+
+interface Props {
+  titre: string;
+  description: string;
+  chemin: string;
+  h1: string;
+  noindex?: boolean;
+}
+
+const { titre, description, chemin, h1, noindex = false } = Astro.props;
+---
+
+<Base titre={titre} description={description} chemin={chemin} noindex={noindex}>
+  <BarreInfo />
+  <Header />
+  <main class="page">
+    <h1 class="page__titre">{h1}</h1>
+    <div class="page__corps"><slot /></div>
+  </main>
+  <PiedDePage />
+</Base>
+
+<style>
+  .page {
+    max-width: 800px;
+    margin-inline: auto;
+    padding: var(--espace-6) var(--espace-3);
+  }
+
+  .page__titre {
+    margin-bottom: var(--espace-4);
+    font-size: var(--taille-h2-bloc);
+  }
+
+  .page__corps :global(h2) {
+    margin-top: var(--espace-5);
+    margin-bottom: var(--espace-2);
+    font-size: var(--taille-h3);
+  }
+
+  .page__corps :global(p),
+  .page__corps :global(li) {
+    max-width: var(--largeur-texte);
+  }
+
+  .page__corps :global(ul) {
+    padding-left: var(--espace-3);
+  }
+
+  .page__corps :global(li) {
+    margin-bottom: var(--espace-1);
+  }
+</style>

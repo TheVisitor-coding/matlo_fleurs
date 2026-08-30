@@ -1,0 +1,23 @@
+---
+import PageTexte from '../layouts/PageTexte.astro';
+import { site } from '../data/site';
+
+const titre = `Message envoyé · ${site.nom}`;
+const jours = site.horaires.filter((j) => j.plages.length > 0);
+const premier = jours[0]?.jour.toLowerCase();
+const dernier = jours.at(-1)?.jour.toLowerCase();
+---
+
+<PageTexte
+  titre={titre}
+  description="Confirmation d'envoi de votre demande."
+  chemin="/message-envoye"
+  h1="Merci, votre message est parti."
+  noindex
+>
+  <p>
+    Nous répondons sous 24 h ouvrées. Pour une demande urgente, appelez-nous au
+    {' '}{site.telephone.affiche} : la boutique est ouverte du {premier} au {dernier} matin.
+  </p>
+  <p><a href="/">Revenir à l'accueil</a></p>
+</PageTexte>
