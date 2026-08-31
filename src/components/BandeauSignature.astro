@@ -5,7 +5,7 @@ import Feuillage from '../assets/feuillage.svg';
 
 <section class="bandeau">
   <Feuillage class="bandeau__feuillage bandeau__feuillage--gauche" aria-hidden="true" />
-  <div class="bandeau__wrapper">
+  <div class="bandeau__wrapper" data-reveal>
     <TitreSection
       ligne1="Pour toutes les occasions,"
       ligne2="rien que pour vous"
@@ -51,15 +51,15 @@ import Feuillage from '../assets/feuillage.svg';
   }
 
   .bandeau__feuillage--gauche {
-    top: 70px;
-    left: -24px;
+    top: 0;
+    left: 6rem;
     rotate: 74.3deg;
     transform-origin: center;
   }
 
   .bandeau__feuillage--droite {
-    top: -14px;
-    right: -24px;
+    bottom: 0;
+    right: 6rem;
     rotate: -105.7deg;
     transform-origin: center;
   }

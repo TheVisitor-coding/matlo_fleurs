@@ -33,12 +33,12 @@ const univers = [
 
 <section class="creations" id={site.ancres.creations.slice(1)}>
   <div class="creations__wrapper">
-    <TitreSection ligne1="Nos créations, composées" ligne2="chaque jour à l'atelier" />
+    <TitreSection ligne1="Nos créations, composées" ligne2="chaque jour à l'atelier" data-reveal />
 
     <ul class="creations__liste">
       {
-        univers.map((item) => (
-          <li class="creations__carte">
+        univers.map((item, index) => (
+          <li class="creations__carte" data-reveal style={`--reveal-index:${index}`}>
             <Arche
               src={item.photo}
               alt={item.alt}

@@ -72,6 +72,10 @@ const horaires = site.horaires.map((j) => ({ iso: j.iso, plages: j.plages }));
     text-decoration: none;
   }
 
+  .barre-info__tel {
+    transition: color var(--duree-moyenne) var(--easing-sortie);
+  }
+
   .barre-info__tel:hover,
   .barre-info__tel:focus-visible {
     text-decoration: underline;

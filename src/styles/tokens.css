@@ -87,4 +87,12 @@
   --arche-filet: 1px;
   --arche-ratio-hero: 380 / 501;
   --arche-ratio-carte: 361 / 383;
+
+  /* Motion. --duree-moyenne est la durée de fait du projet : le menu mobile
+     l'employait déjà en dur avant qu'elle soit nommée. */
+  --duree-courte: 200ms;
+  --duree-moyenne: 250ms;
+  --duree-longue: 500ms;
+  --easing-sortie: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --decalage-reveal: 80ms;
 }

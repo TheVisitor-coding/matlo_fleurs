@@ -80,6 +80,7 @@ const classes = [
     height: 100%;
     padding: 10px var(--espace-2);
     border: var(--arche-filet) solid var(--couleur-sauge);
+    transition: border-color var(--duree-moyenne) var(--easing-sortie);
   }
 
   .bouton__texte {
@@ -124,6 +125,12 @@ const classes = [
   a.bouton:hover .bouton__cadre,
   a.bouton:focus-visible .bouton__cadre {
     border-color: currentColor;
+  }
+
+  a.bouton--secondaire {
+    transition:
+      background-color var(--duree-moyenne) var(--easing-sortie),
+      color var(--duree-moyenne) var(--easing-sortie);
   }
 
   a.bouton--secondaire:hover,

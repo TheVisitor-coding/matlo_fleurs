@@ -139,6 +139,10 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     text-decoration: none;
   }
 
+  .entete__lien {
+    transition: color var(--duree-moyenne) var(--easing-sortie);
+  }
+
   .entete__lien:hover,
   .entete__lien:focus-visible {
     color: var(--texte-accent);
@@ -166,7 +170,7 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
       color: var(--texte-inverse);
       translate: 0 -100%;
       visibility: hidden;
-      transition: translate 0.25s ease, visibility 0.25s;
+      transition: translate var(--duree-moyenne) ease, visibility var(--duree-moyenne);
     }
 
     .entete--ouvert .entete__nav {
@@ -228,7 +232,7 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
       height: 2px;
       border-radius: 1000px;
       background: var(--couleur-nuit);
-      transition: background 0.25s;
+      transition: background var(--duree-moyenne);
     }
 
     .entete--ouvert .entete__barre {

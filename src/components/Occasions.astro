@@ -50,8 +50,8 @@ const occasions = [
 
     <ul class="occasions__liste">
       {
-        occasions.map((occasion) => (
-          <li class="occasions__carte" id={occasion.ancre}>
+        occasions.map((occasion, index) => (
+          <li class="occasions__carte" id={occasion.ancre} data-reveal style={`--reveal-index:${index}`}>
             <Image
               class="occasions__photo"
               src={photo}

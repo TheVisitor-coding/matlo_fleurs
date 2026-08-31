@@ -104,3 +104,38 @@ address {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Révélation au défilement. Le préfixe .js est la garde anti-page-blanche :
+   sans JavaScript, aucune règle d'opacité nulle ne s'applique et la page
+   reste intégralement lisible. */
+.js [data-reveal] {
+  opacity: 0;
+  translate: 0 16px;
+  transition:
+    opacity var(--duree-longue) var(--easing-sortie),
+    translate var(--duree-longue) var(--easing-sortie);
+  transition-delay: calc(var(--reveal-index, 0) * var(--decalage-reveal));
+}
+
+.js [data-reveal][data-vu] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Placé en fin de fichier pour passer après les règles qu'il neutralise.
+   L'animation de la signature du hero est en SMIL, que le CSS n'atteint pas :
+   elle est traitée séparément dans Hero.astro. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .js [data-reveal] {
+    opacity: 1;
+    translate: none;
+  }
+}

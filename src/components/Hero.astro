@@ -26,8 +26,23 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
       </p>
 
       <h1 class="hero__titre">
-        <span>Des compositions florales,</span>
-        <span class="accent hero__titre-accent">façonnées à la main</span>
+        <span class="hero__titre-ligne">Des compositions florales,</span>{' '}
+        <span class="hero__titre-accent">
+          <span class="hors-ecran">façonnées à la main</span>
+          <picture>
+            {/* L'animation est en SMIL, que le CSS n'atteint pas : le mouvement
+                réduit passe donc par une seconde image, déjà tracée. */}
+            <source srcset="/signature-statique.svg" media="(prefers-reduced-motion: reduce)" />
+            <img
+              class="hero__signature"
+              src="/signature.svg"
+              alt=""
+              width="478"
+              height="180"
+              fetchpriority="high"
+            />
+          </picture>
+        </span>
       </h1>
 
       <p class="hero__chapo">
@@ -119,6 +134,53 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     /* Le script déborde de sa boîte de ligne, une marge négative rattrape le
        creux que laisserait l'interligne nominal. */
     margin-top: -0.15em;
+  }
+
+  /* Chorégraphie d'entrée. .hero__visuel en est exclu à dessein : l'arche porte
+     fetchpriority=high, c'est le candidat LCP, et une opacité nulle en
+     retarderait la mesure d'autant. */
+  @keyframes hero-entree {
+    from {
+      opacity: 0;
+      translate: 0 12px;
+    }
+  }
+
+  .hero__surtitre,
+  .hero__titre-ligne,
+  .hero__chapo,
+  .hero__actions,
+  .hero__filet,
+  .hero__atouts {
+    animation: hero-entree var(--duree-longue) var(--easing-sortie) backwards;
+  }
+
+  .hero__titre-ligne {
+    animation-delay: 80ms;
+  }
+
+  .hero__chapo {
+    animation-delay: 160ms;
+  }
+
+  .hero__actions {
+    animation-delay: 240ms;
+  }
+
+  .hero__filet {
+    animation-delay: 320ms;
+  }
+
+  .hero__atouts {
+    animation-delay: 400ms;
+  }
+
+  /* Le SVG est généré à fontSize 100 dans une boîte de 180 : 1.8em de haut et
+     4.779em de large reproduisent exactement l'échelle du texte qu'il remplace. */
+  .hero__signature {
+    font-size: var(--taille-accent);
+    width: min(100%, 4.779em);
+    height: auto;
   }
 
   .hero__chapo {

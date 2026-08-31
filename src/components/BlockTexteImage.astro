@@ -29,7 +29,7 @@ const {
 
 <section class={`bloc bloc--image-${cote}`} id={id} style={`--taille-titre: ${tailleTitre}`}>
   <div class="bloc__wrapper">
-    <div class="bloc__visuel" style={`--hauteur-image: ${hauteurImage}px`}>
+    <div class="bloc__visuel" data-reveal style={`--hauteur-image: ${hauteurImage}px`}>
       <Image
         class="bloc__image"
         src={image}
@@ -41,7 +41,7 @@ const {
       />
     </div>
 
-    <div class="bloc__texte">
+    <div class="bloc__texte" data-reveal style="--reveal-index:1">
       <p class="label bloc__surtitre">
         <EtoileSurtitre class="bloc__etoile" aria-hidden="true" />
         {surtitre}

@@ -50,6 +50,10 @@ const schema = donneesStructurees ? florist(canonique) : null;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#1d1e33" />
 
+    {/* Posée avant le premier rendu : les révélations au défilement partent
+        d'une opacité nulle, que rien ne relèverait sans JavaScript. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+
     {/* Seules les polices du titre du hero sont préchargées : les précharger
         toutes ferait de la typographie le goulot du LCP. */}
     <Font cssVariable="--police-titre" preload />
@@ -62,5 +66,26 @@ const schema = donneesStructurees ? florist(canonique) : null;
   </head>
   <body>
     <slot />
+
+    <script>
+      const cibles = document.querySelectorAll('[data-reveal]');
+
+      if (!('IntersectionObserver' in window)) {
+        cibles.forEach((cible) => cible.setAttribute('data-vu', ''));
+      } else {
+        const observateur = new IntersectionObserver(
+          (entrees) => {
+            for (const entree of entrees) {
+              if (!entree.isIntersecting) continue;
+              entree.target.setAttribute('data-vu', '');
+              observateur.unobserve(entree.target);
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px' },
+        );
+
+        cibles.forEach((cible) => observateur.observe(cible));
+      }
+    </script>
   </body>
 </html>
