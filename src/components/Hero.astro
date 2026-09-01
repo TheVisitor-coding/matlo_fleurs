@@ -37,8 +37,8 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
               class="hero__signature"
               src="/signature.svg"
               alt=""
-              width="478"
-              height="180"
+              width="467"
+              height="99"
               fetchpriority="high"
             />
           </picture>
@@ -98,8 +98,8 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    gap: var(--espace-5);
-    max-width: var(--largeur-contenu);
+    gap: var(--espace-3);
+    max-width: var(--largeur-page);
     margin-inline: auto;
     padding-inline: var(--espace-5);
   }
@@ -108,6 +108,9 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     display: flex;
     flex-direction: column;
     gap: var(--espace-3);
+    /* Référence du `cqw` de la ligne 1 du titre, qui doit tenir sur une ligne à
+       une largeur que la maquette ne décrit qu'en 1440. */
+    container-type: inline-size;
   }
 
   .hero__surtitre {
@@ -130,10 +133,18 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     flex-direction: column;
   }
 
-  .hero__titre-accent {
-    /* Le script déborde de sa boîte de ligne, une marge négative rattrape le
-       creux que laisserait l'interligne nominal. */
-    margin-top: -0.15em;
+  /* La maquette ne met aucun interlettrage sur cette ligne, contrairement à la
+     règle globale des titres : les 0.06em lui coûtent 62 px et la font passer
+     sur deux lignes. Le `min()` la fait suivre la colonne en dessous de la
+     largeur de maquette plutôt que de casser : 580 px mesurés pour 40 px de
+     corps, soit 6.9 % de la colonne, arrondi en dessous. */
+  .hero__titre-ligne {
+    letter-spacing: normal;
+    font-size: min(var(--taille-h1), 6.85cqw);
+  }
+
+  .hero__titre-accent picture {
+    display: block;
   }
 
   /* Chorégraphie d'entrée. .hero__visuel en est exclu à dessein : l'arche porte
@@ -175,16 +186,21 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     animation-delay: 400ms;
   }
 
-  /* Le SVG est généré à fontSize 100 dans une boîte de 180 : 1.8em de haut et
-     4.779em de large reproduisent exactement l'échelle du texte qu'il remplace. */
+  /* `npm run signature` recadre le SVG au plus près de l'encre et affiche la
+     valeur à reporter ici : 467.01 unités de large pour un corps de 100, soit
+     4.6701em. Le vide d'interligne ayant quitté le fichier, il n'y a plus de
+     marge négative à lui opposer. */
   .hero__signature {
     font-size: var(--taille-accent);
-    width: min(100%, 4.779em);
+    width: min(100%, 4.6701em);
     height: auto;
   }
 
   .hero__chapo {
     margin: 0;
+    /* La maquette lui donne toute la colonne ; le `68ch` global des paragraphes
+       la briserait avant. */
+    max-width: none;
     font-size: var(--taille-corps);
   }
 
@@ -206,7 +222,10 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--espace-2) var(--espace-3);
+    /* 16 px est la valeur de la maquette, et c'est un minimum que
+       `space-between` ne peut pas descendre : à 24 px les quatre items ne
+       tiennent plus sur une ligne. */
+    gap: var(--espace-2);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -216,6 +235,7 @@ const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined
     display: flex;
     align-items: center;
     gap: 10px;
+    white-space: nowrap;
     font-family: var(--famille-label);
     font-size: var(--taille-label);
     color: var(--texte-accent);

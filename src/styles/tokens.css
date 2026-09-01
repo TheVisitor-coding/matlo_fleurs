@@ -80,6 +80,10 @@
   --espace-8: 8rem;
 
   --largeur-contenu: 1240px;
+  /* La gouttière vit hors de la largeur de contenu. Appliquer `max-width:
+     var(--largeur-contenu)` puis `padding-inline` en dedans ampute le contenu de
+     96 px et fait tomber tous les blocks sous les largeurs de la maquette. */
+  --largeur-page: calc(var(--largeur-contenu) + 2 * var(--espace-5));
   --largeur-texte: 68ch;
 
   /* Motif signature : uniquement sur une image de création ou de personne. */
