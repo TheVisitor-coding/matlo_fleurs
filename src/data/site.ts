@@ -25,6 +25,10 @@ export const site = {
     lien: null as string | null,
   },
 
+  // Doit rester identique à la boîte créée chez Infomaniak et au `DESTINATAIRE`
+  // de `public/api/contact.php`, que TypeScript ne peut pas lire.
+  email: 'contact@matlofleurs.fr',
+
   horaires: [
     { jour: 'Lundi', plages: [], iso: 1 },
     { jour: 'Mardi', plages: ['9h-12h30', '14h30-19h'], iso: 2 },

@@ -5,7 +5,7 @@ declare(strict_types=1);
 // Le formulaire de la page d'accueil est le seul endroit du site où déposer une
 // demande de devis. Une adresse non renseignée doit donc échouer bruyamment,
 // jamais perdre un message en silence.
-const DESTINATAIRE = 'A_COMPLETER@matlofleurs.fr';
+const DESTINATAIRE = 'contact@matlofleurs.fr';
 const EXPEDITEUR = 'site@matlofleurs.fr';
 const REDIRECTION_SUCCES = '/message-envoye';
 const MAX_PAR_HEURE = 5;

@@ -11,6 +11,10 @@ on:
         description: 'Simulation rsync, sans rien écrire sur le serveur'
         type: boolean
         default: true
+      preversion:
+        description: 'Cible la préversion protégée. Décocher publie en production.'
+        type: boolean
+        default: true
 
 concurrency:
   group: deploiement
@@ -37,6 +41,31 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL }}
 
+      # La décision « déploiement manuel uniquement » repose sur la vigilance
+      # humaine. Cette garde la confie à la machine pour la seule opération
+      # irréversible : la publication sur le domaine public.
+      - name: Garde de publication
+        if: ${{ inputs.essai == false && inputs.preversion == false }}
+        run: |
+          echec=0
+          if grep -rq 'À COMPLÉTER' dist/; then
+            echo "::error::Des marqueurs [À COMPLÉTER] sont encore visibles publiquement."
+            echec=1
+          fi
+          # Cibler la constante, pas le fichier : `contact.php` garde une garde
+          # défensive qui contient le même littéral et resterait détectée.
+          if grep -q "DESTINATAIRE = 'A_COMPLETER" dist/api/contact.php; then
+            echo "::error::Le formulaire n'a pas de destinataire, il renverrait un 503."
+            echec=1
+          fi
+          # Le deux-points est ce qui distingue la clé JSON-LD du champ de
+          # formulaire `id="telephone"`, présent dans la page en toute hypothèse.
+          if ! grep -q '"telephone":' dist/index.html; then
+            echo "::error::Le téléphone est absent du JSON-LD, donc du site entier."
+            echec=1
+          fi
+          exit $echec
+
       # Variables à définir dans le dépôt :
       #   secrets.SSH_CLE_PRIVEE   clé privée du compte SSH Infomaniak
       #   vars.SSH_HOTE            hôte SSH
@@ -44,7 +73,9 @@ jobs:
       #   vars.SSH_PORT            port SSH, 22 par défaut
       #   vars.CHEMIN_DISTANT      racine web du site, avec un / final
       #   vars.SSH_HOTE_CLE        empreinte publique de l'hôte (recommandé)
-      #   vars.SITE_URL            https://matlofleurs.fr
+      #   vars.SITE_URL            https://matlofleurs.fr, sert au build
+      #   vars.URL_VERIFICATION    URL réellement servie, à retirer à la bascule
+      #   secrets.PREVERSION_AUTH  utilisateur:motdepasse de la préversion
       - name: Préparer la connexion SSH
         env:
           CLE: ${{ secrets.SSH_CLE_PRIVEE }}
@@ -65,8 +96,10 @@ jobs:
           fi
           chmod 600 ~/.ssh/known_hosts
 
-      # --delete nettoie les fichiers retirés du site, mais .well-known doit
-      # survivre : Infomaniak y place les jetons de renouvellement de certificat.
+      # --delete nettoie les fichiers retirés du site, mais trois choses posées
+      # par Infomaniak dans la racine web doivent survivre : les jetons de
+      # certificat de .well-known, la compression PHP de .user.ini, et la page
+      # servie par le mode maintenance du manager.
       - name: Publier avec rsync
         env:
           HOTE: ${{ vars.SSH_HOTE }}
@@ -76,23 +109,31 @@ jobs:
           ESSAI: ${{ inputs.essai }}
         run: |
           set -euo pipefail
-          OPTIONS="-az --delete --exclude .well-known --exclude .git"
+          # Tableau et non chaîne : un motif à joker survivrait mal à la
+          # découpe en mots que subit une variable non protégée.
+          OPTIONS=(-az --delete --exclude .well-known --exclude .git
+                   --exclude .user.ini --exclude '.infomaniak-*')
           if [ "$ESSAI" = "true" ]; then
-            OPTIONS="$OPTIONS --dry-run --itemize-changes"
+            OPTIONS+=(--dry-run --itemize-changes)
             echo "::notice::Simulation, aucune écriture sur le serveur."
           fi
-          rsync $OPTIONS \
+          rsync "${OPTIONS[@]}" \
             -e "ssh -i ~/.ssh/id_deploiement -p ${PORT:-22} -o StrictHostKeyChecking=yes" \
             dist/ "$UTILISATEUR@$HOTE:$CHEMIN"
 
+      # L'URL contrôlée n'est pas celle du build : tant que le site vit sur la
+      # préversion, SITE_URL désigne un domaine encore muet. Et la préversion est
+      # protégée par mot de passe, donc un contrôle sans identifiants ne verrait
+      # que des 401.
       - name: Vérifier la mise en ligne
         if: ${{ inputs.essai == false }}
         env:
-          SITE: ${{ vars.SITE_URL }}
+          SITE: ${{ vars.URL_VERIFICATION || vars.SITE_URL }}
+          AUTH: ${{ secrets.PREVERSION_AUTH }}
         run: |
           set -euo pipefail
           for chemin in / /mentions-legales /politique-de-confidentialite; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE$chemin")
+            code=$(curl -s -o /dev/null -w '%{http_code}' ${AUTH:+--user "$AUTH"} "$SITE$chemin")
             echo "$chemin -> $code"
             [ "$code" = "200" ] || exit 1
           done
