@@ -24,6 +24,30 @@ jobs:
   deployer:
     runs-on: ubuntu-latest
     steps:
+      # Une variable de dépôt absente arrive comme chaîne vide, sans erreur.
+      # Avec CHEMIN_DISTANT vide, rsync --delete viserait le répertoire personnel
+      # du compte SSH et en effacerait le contenu, `sites/` compris.
+      - name: Vérifier la configuration du dépôt
+        env:
+          SSH_HOTE: ${{ vars.SSH_HOTE }}
+          SSH_UTILISATEUR: ${{ vars.SSH_UTILISATEUR }}
+          CHEMIN_DISTANT: ${{ vars.CHEMIN_DISTANT }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          SSH_CLE_PRIVEE: ${{ secrets.SSH_CLE_PRIVEE }}
+        run: |
+          manque=0
+          for nom in SSH_HOTE SSH_UTILISATEUR CHEMIN_DISTANT SITE_URL SSH_CLE_PRIVEE; do
+            if [ -z "${!nom}" ]; then
+              echo "::error::$nom est vide ou absente. Vérifier l'onglet Variables, pas Secrets."
+              manque=1
+            fi
+          done
+          case "$CHEMIN_DISTANT" in
+            */) ;;
+            *) echo "::error::CHEMIN_DISTANT doit se terminer par un /."; manque=1 ;;
+          esac
+          exit $manque
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4

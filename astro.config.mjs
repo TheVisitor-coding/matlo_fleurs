@@ -1,7 +1,9 @@
 import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-const site = process.env.SITE_URL ?? 'https://matlofleurs.fr';
+// `||` et non `??` : une variable GitHub Actions absente arrive comme chaîne
+// vide, que `??` accepterait, et Astro rejette alors une URL invalide.
+const site = process.env.SITE_URL || 'https://matlofleurs.fr';
 
 const police = (name, cssVariable, weights, styles = ['normal']) => ({
   provider: fontProviders.google(),
