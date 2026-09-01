@@ -33,12 +33,11 @@ ErrorDocument 404 /404.html
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
-  # Toute origine autre que le domaine de production est une préversion, dont
-  # l'URL technique peut changer sans préavis. La règle s'éteint d'elle-même le
-  # jour où le site est servi sur son domaine.
-  <If "%{HTTP_HOST} != 'matlofleurs.fr'">
-    Header always set X-Robots-Tag "noindex, nofollow"
-  </If>
+  # AVANT OUVERTURE. Le site est servi sur son domaine définitif, publiquement,
+  # alors qu'il est encore incomplet. Cette ligne est la seule chose qui le tient
+  # hors de l'index. À retirer le jour de la bascule : la garde de publication du
+  # workflow refuse un déploiement en production tant qu'elle est là.
+  Header always set X-Robots-Tag "noindex, nofollow"
 
   <If "%{REQUEST_URI} =~ m#^/_astro/#">
     Header set Cache-Control "public, max-age=31536000, immutable"

@@ -64,6 +64,13 @@ jobs:
             echo "::error::Le téléphone est absent du JSON-LD, donc du site entier."
             echec=1
           fi
+          # Oublier de retirer ce noindex publierait un site que Google
+          # n'indexerait jamais, panne silencieuse et coûteuse pour un commerce
+          # local. La garde échoue donc tant qu'il est présent.
+          if grep -q 'X-Robots-Tag' dist/.htaccess; then
+            echo "::error::Le noindex d'avant ouverture est encore dans .htaccess."
+            echec=1
+          fi
           exit $echec
 
       # Variables à définir dans le dépôt :
