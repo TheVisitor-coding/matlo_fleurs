@@ -12,3 +12,6 @@ node_modules/
 
 # système
 .DS_Store
+
+# secrets de déploiement
+deploy/.env
