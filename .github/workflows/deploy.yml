@@ -29,16 +29,16 @@ jobs:
       # du compte SSH et en effacerait le contenu, `sites/` compris.
       - name: Vérifier la configuration du dépôt
         env:
-          SSH_HOTE: ${{ vars.SSH_HOTE }}
-          SSH_UTILISATEUR: ${{ vars.SSH_UTILISATEUR }}
-          CHEMIN_DISTANT: ${{ vars.CHEMIN_DISTANT }}
-          SITE_URL: ${{ vars.SITE_URL }}
+          SSH_HOTE: ${{ secrets.SSH_HOTE }}
+          SSH_UTILISATEUR: ${{ secrets.SSH_UTILISATEUR }}
+          CHEMIN_DISTANT: ${{ secrets.CHEMIN_DISTANT }}
+          SITE_URL: ${{ secrets.SITE_URL }}
           SSH_CLE_PRIVEE: ${{ secrets.SSH_CLE_PRIVEE }}
         run: |
           manque=0
           for nom in SSH_HOTE SSH_UTILISATEUR CHEMIN_DISTANT SITE_URL SSH_CLE_PRIVEE; do
             if [ -z "${!nom}" ]; then
-              echo "::error::$nom est vide ou absente. Vérifier l'onglet Variables, pas Secrets."
+              echo "::error::$nom est vide ou absente. Vérifier l'onglet Secrets."
               manque=1
             fi
           done
@@ -63,7 +63,7 @@ jobs:
 
       - run: npm run build
         env:
-          SITE_URL: ${{ vars.SITE_URL }}
+          SITE_URL: ${{ secrets.SITE_URL }}
 
       # La décision « déploiement manuel uniquement » repose sur la vigilance
       # humaine. Cette garde la confie à la machine pour la seule opération
@@ -97,22 +97,24 @@ jobs:
           fi
           exit $echec
 
-      # Variables à définir dans le dépôt :
-      #   secrets.SSH_CLE_PRIVEE   clé privée du compte SSH Infomaniak
-      #   vars.SSH_HOTE            hôte SSH
-      #   vars.SSH_UTILISATEUR     utilisateur SSH
-      #   vars.SSH_PORT            port SSH, 22 par défaut
-      #   vars.CHEMIN_DISTANT      racine web du site, avec un / final
-      #   vars.SSH_HOTE_CLE        empreinte publique de l'hôte (recommandé)
-      #   vars.SITE_URL            https://matlofleurs.fr, sert au build
-      #   vars.URL_VERIFICATION    URL réellement servie, à retirer à la bascule
-      #   secrets.PREVERSION_AUTH  utilisateur:motdepasse de la préversion
+      # Tout est en secrets, y compris ce qui n'est pas sensible : GitHub les
+      # masque dans les logs, ce qui rend le diagnostic plus aveugle mais garde
+      # une seule source à maintenir.
+      #   SSH_CLE_PRIVEE     clé privée du compte SSH Infomaniak
+      #   SSH_HOTE           hôte SSH
+      #   SSH_UTILISATEUR    utilisateur SSH
+      #   SSH_PORT           port SSH, 22 par défaut
+      #   CHEMIN_DISTANT     racine web du site, avec un / final
+      #   SSH_HOTE_CLE       empreinte publique de l'hôte (recommandé)
+      #   SITE_URL           https://matlofleurs.fr, sert au build
+      #   URL_VERIFICATION   URL contrôlée si différente de SITE_URL, facultative
+      #   PREVERSION_AUTH    utilisateur:motdepasse, si le site est protégé
       - name: Préparer la connexion SSH
         env:
           CLE: ${{ secrets.SSH_CLE_PRIVEE }}
-          HOTE: ${{ vars.SSH_HOTE }}
-          PORT: ${{ vars.SSH_PORT }}
-          HOTE_CLE: ${{ vars.SSH_HOTE_CLE }}
+          HOTE: ${{ secrets.SSH_HOTE }}
+          PORT: ${{ secrets.SSH_PORT }}
+          HOTE_CLE: ${{ secrets.SSH_HOTE_CLE }}
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh
@@ -133,10 +135,10 @@ jobs:
       # servie par le mode maintenance du manager.
       - name: Publier avec rsync
         env:
-          HOTE: ${{ vars.SSH_HOTE }}
-          UTILISATEUR: ${{ vars.SSH_UTILISATEUR }}
-          PORT: ${{ vars.SSH_PORT }}
-          CHEMIN: ${{ vars.CHEMIN_DISTANT }}
+          HOTE: ${{ secrets.SSH_HOTE }}
+          UTILISATEUR: ${{ secrets.SSH_UTILISATEUR }}
+          PORT: ${{ secrets.SSH_PORT }}
+          CHEMIN: ${{ secrets.CHEMIN_DISTANT }}
           ESSAI: ${{ inputs.essai }}
         run: |
           set -euo pipefail
@@ -152,14 +154,13 @@ jobs:
             -e "ssh -i ~/.ssh/id_deploiement -p ${PORT:-22} -o StrictHostKeyChecking=yes" \
             dist/ "$UTILISATEUR@$HOTE:$CHEMIN"
 
-      # L'URL contrôlée n'est pas celle du build : tant que le site vit sur la
-      # préversion, SITE_URL désigne un domaine encore muet. Et la préversion est
-      # protégée par mot de passe, donc un contrôle sans identifiants ne verrait
-      # que des 401.
+      # URL_VERIFICATION permet de contrôler une adresse différente de celle du
+      # build. Absente, on retombe sur SITE_URL. AUTH ne sert que si le site est
+      # protégé par mot de passe, sinon l'option disparaît de la commande.
       - name: Vérifier la mise en ligne
         if: ${{ inputs.essai == false }}
         env:
-          SITE: ${{ vars.URL_VERIFICATION || vars.SITE_URL }}
+          SITE: ${{ secrets.URL_VERIFICATION || secrets.SITE_URL }}
           AUTH: ${{ secrets.PREVERSION_AUTH }}
         run: |
           set -euo pipefail
