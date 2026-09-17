@@ -8,7 +8,9 @@ export const site = {
   nom: "Matlo'Fleurs",
   baseline: 'Artisan Fleuriste',
   metier: 'Fleuriste artisanale à Challans',
-  fleuriste: 'Stéphanie',
+  fleuriste: 'Stéphanie ROY',
+  siret: '1098403220009',
+  forme: 'SARL',
 
   adresse: {
     // Chaîne unique dont dérivent toutes les autres formes : l'adresse doit
@@ -19,10 +21,8 @@ export const site = {
   },
 
   telephone: {
-    affiche: '02 XX XX XX XX',
-    // `null` tant que le numéro réel est inconnu : un placeholder inerte vaut
-    // mieux qu'un `tel:` cassé.
-    lien: null as string | null,
+    affiche: '02 51 35 46 37',
+    lien: 'tel:0251354637',
   },
 
   // Doit rester identique à la boîte créée chez Infomaniak et au `DESTINATAIRE`

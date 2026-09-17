@@ -8,6 +8,13 @@
   formulaire · déploiement rsync SSH sur Infomaniak mutualisé
 - **Repo** : https://github.com/TheVisitor-coding/matlo_fleurs
 - **Vault miroir** : ~/Personal_Vault/02 - Projects/matlo_fleurs/Session-Logs/
+- **Prior art hébergement** : Infomaniak mutualisé, **même offre qu'adaptours**. Avant toute
+  conclusion d'infra (CI, rsync, SSH, versions PHP, `mail()`, pare-feu), lire
+  `~/dev/adaptours/.claude/CLAUDE.md` § déploiement et la note vault
+  `03 - Knowledge/Dev/DevOps/deploiement-wordpress-infomaniak-mutualise-ci-rsync.md`.
+  **Échec payé le 2026-09-01** : un rsync depuis GitHub Actions a été déclaré impossible sur cette
+  offre, documentation du pare-feu à l'appui, alors qu'adaptours le fait sur le même hébergeur
+  depuis juillet. Le correctif est venu du dépôt voisin, pas de la doc.
 
 ## Contexte métier
 - Fleuriste artisanale à **Challans (Vendée)**, ouverture imminente. Boutique tenue par ma mère.
@@ -93,11 +100,14 @@
   ni dans les textes du site, ni dans aucun livrable client.
 
 ## État actuel
-- **Phase** : **page d'accueil intégralement intégrée** (12 blocks) plus mentions légales,
-  politique de confidentialité, 404 et confirmation d'envoi. Build propre, 13 tests au vert.
-  Couche d'animation posée : entrée du hero, révélation au défilement, micro-interactions,
-  signature manuscrite tracée.
-  **Le site n'est PAS publiable** : voir les 4 bloquants durs dans « Bugs connus ».
+- **Phase** : **site en ligne sur `matlofleurs.fr`**, tenu hors de l'index par un
+  `X-Robots-Tag: noindex` d'avant ouverture. Page d'accueil intégralement intégrée
+  (12 blocks) plus mentions légales, politique de confidentialité, 404 et confirmation
+  d'envoi. Couche d'animation posée. **Hero conforme au relevé Figma** depuis le
+  2026-09-02 (largeur de contenu, titre sur une ligne, signature recadrée, tags sur une
+  rangée), **18 tests** au vert. Apache, PHP et le formulaire vérifiés en production.
+  **Il reste 3 bloquants** avant l'ouverture réelle : voir « Bugs connus ».
+  `/politique-de-confidentialite` est la première page entièrement publiable.
 - **Branche principale** : `main`
 
 ## Règles de travail
@@ -125,10 +135,10 @@
 - [2026-08-30] Figma nomme les calques texte d'après leur contenu : `get_metadata` suffit
   à récupérer la copy d'une page, `get_design_context` est inutilement coûteux sur une
   page longue. Pour les couleurs de fond, échantillonner les pixels d'un screenshot.
-- [2026-08-30] **PHP absent de la machine de dev** : `public/api/contact.php` n'est ni
-  lintable ni testable en local. Il exige **PHP 8.1 minimum** (`never`, `str_contains`),
-  à sélectionner dans le manager Infomaniak. Même remarque pour `.htaccess`, qui demande
-  Apache : la règle sans slash final n'est vérifiable que sur une préversion.
+- [2026-08-30, résolu 2026-09-01] **PHP et Apache absents de la machine de dev**, donc
+  `contact.php` et `.htaccess` ne sont ni lintables ni testables en local. Ils le sont
+  désormais **en production**, où le serveur sert **PHP 8.4.21**. Les deux ont été
+  vérifiés le 2026-09-01 et fonctionnent.
 - [2026-08-30] **`sharp` est disponible via Astro et Chrome est installé.** Aucune
   dépendance à ajouter pour rastériser un SVG ou capturer une page. `npm run og` régénère
   la carte de partage depuis `/og` avec les vraies fontes ; **elle contient l'adresse**,
@@ -139,10 +149,59 @@
   `scripts/tangerine-glyphdata.json`. Exige `tegaki`, devDependency de **44 Mo** jamais
   livrée au navigateur. Les SVG étant committés, ni le build ni le déploiement n'en
   dépendent. Le script refuse de tourner si un caractère du texte manque au bundle.
+- [2026-09-01] **Hébergement Infomaniak actif.** Hôte SSH `qw0z78.ftp.infomaniak.com`,
+  utilisateur `qw0z78_mrossi`, racine web `sites/matlofleurs.fr/` (relative au home),
+  clé `~/.ssh/matlofleurs_ci` en ed25519. Le domaine, l'apex et `www` pointent sur le
+  serveur, certificat émis.
+- [2026-09-01] **`npm run deploy`** rejoue toute la chaîne du workflow en local : tests,
+  check, build, garde de publication, rsync. **Simulation par défaut**, `--reel` pour
+  écrire, `--production` pour lever la garde d'avant ouverture. Config dans `deploy/.env`,
+  ignoré par git.
+- [2026-09-02] **Chrome se pilote en CDP** pour lire la géométrie réelle d'une page
+  (lignes rendues, largeurs, positions), ce qu'aucune capture ne donne. Viser la cible de
+  type `page` de `/json/list` : le websocket de `/json/version` est celui du navigateur et
+  ne connaît ni `Runtime` ni `Page`. `--force-prefers-reduced-motion` sert la signature
+  déjà tracée et neutralise la chorégraphie d'entrée, donc rend l'état final.
 - Skills marketing installées sur ce projet : `content-strategy`, `customer-research`,
   `marketing-plan`, `marketing-psychology`, `site-architecture`.
 
 ## Known Pitfalls
+- [2026-09-02] **Recadrer une `viewBox` qui contient des `<mask maskUnits="userSpaceOnUse">`
+  sans région explicite efface une partie du dessin, en silence.** Les valeurs initiales de
+  la spécification, `-10% -10% 120% 120%`, se résolvent contre la **taille** du viewport
+  mais restent **ancrées sur l'origine (0,0)**, pas sur le coin de la `viewBox` : tant que
+  la boîte commence à `0 0`, tout marche par accident. Poser `x/y/width/height` sur chaque
+  masque. Le défaut est invisible dans le XML comme dans un diff, et la variante non
+  masquée du même dessin passe sans rien signaler : seule la rasterisation le montre.
+- [2026-09-02] **`gap` est un plancher que `justify-content: space-between` ne peut pas
+  franchir** : la ligne casse au lieu de se resserrer. Le symptôme apparaît à une autre
+  largeur que celle où l'on travaille, la gouttière de 24 px des tags du hero tenait en
+  1440 et cassait en 1280. Relever la valeur d'espacement réelle de la maquette plutôt que
+  la valeur voisine de l'échelle de tokens.
+- [2026-09-02] **`docs/04` et `docs/05` sont périmés sur la typo du hero** : ils donnent
+  Cinzel 48 px et Updock 76 px là où la maquette courante dit **Cinzel 40 px et Tangerine
+  76 px**. Les tokens du code sont justes, ce sont les docs qui ont dérivé.
+- [2026-09-01] **`mail()` est désactivée par défaut sur le mutualisé Infomaniak.**
+  `disable_functions` contient `exec,mail,passthru,pcntl_exec,popen,proc_open,shell_exec,system`.
+  Le formulaire renvoyait un 200 avec `Call to undefined function mail()` dans le corps.
+  Activée depuis le manager. Repli si elle est retirée : SMTP authentifié par
+  `stream_socket_client`, disponible comme `openssl`.
+- [2026-09-01] **L'hôte SSH doit être `<prefixe>.ftp.infomaniak.com`, pas l'IP du serveur
+  web.** Avec l'IP, la connexion depuis GitHub Actions **expire** alors qu'elle passe en
+  2 s depuis un poste. Ne pas non plus figer `SSH_HOTE_CLE` : l'empreinte est enregistrée
+  pour l'IP et ne correspond pas au nom d'hôte. La cause exacte du timeout reste inconnue.
+- [2026-09-01] **Une variable GitHub Actions absente arrive comme chaîne vide**, que `??`
+  laisse passer. `process.env.X ?? defaut` ne protège de rien sur un runner, il faut `||`.
+  Et les onglets **Secrets** et **Variables** sont distincts : `vars.` ne voit pas ce qui
+  est saisi dans Secrets, sans aucun avertissement.
+- [2026-09-01] **Une garde automatisée doit être éprouvée contre le `dist/` réel.** Sur
+  4 contrôles, 2 motifs étaient faux et aucune relecture ne l'aurait montré :
+  `grep '"telephone"'` matchait le champ `id="telephone"` (faux positif autorisant la
+  publication), `grep 'A_COMPLETER'` matchait la garde défensive du PHP (faux refus
+  permanent).
+- [2026-09-01] **`rsync --delete` efface ce que l'hébergeur pose dans la racine web** :
+  `.user.ini` (compression PHP) et `.infomaniak-maintenance.html` (mode maintenance du
+  manager). À exclure, comme `.well-known`.
 - [2026-08-31] **Tegaki exige un bundle personnalisé pour du texte français.** Les
   bundles livrés avec le paquet ne contiennent que **88 glyphes ASCII** : `ç`, `é`, `à`
   ne produisent aucun tracé, et le composant client les dessine d'un `ctx.fillText` sans
@@ -200,6 +259,42 @@
   comme une occasion parmi d'autres dans les templates.
 
 ## Décisions techniques
+- [2026-09-02] **La gouttière vit hors de la largeur de contenu.** Token `--largeur-page`
+  = `--largeur-contenu` + 2 x `--espace-5`, porté par les 11 wrappers du site, qui gardent
+  leur `padding-inline`. Le contenu fait alors 1240 px à partir de x=100, comme la
+  maquette. Le motif précédent, `max-width: var(--largeur-contenu)` puis `padding-inline`
+  en dedans, amputait toute la page de 96 px.
+- [2026-09-02] **Le H1 du hero n'a pas d'interlettrage**, contre la règle globale
+  `h1, h2, h3` à 0.06em : c'est le relevé Figma, et ces 0.06em coûtaient 62 px à la ligne 1.
+  Elle tient sur une ligne par `min(var(--taille-h1), 6.85cqw)` avec `container-type:
+  inline-size` sur `.hero__texte`, coefficient calé sur 580 px mesurés pour 40 px de corps.
+  Les H2 gardent le leur, faute de relevé.
+- [2026-09-02] **La signature est recadrée sur son encre** par `npm run signature`, qui
+  affiche la largeur en `em` à reporter dans `.hero__signature`. Boîte passée de 477,9x180
+  à 467,01x98,74, l'ancienne était vide à 45 % et rognait l'encre à gauche. `tegaki` ne
+  recadre que son mode `loop`, d'où un post-traitement : `scripts/svg-boite.mjs` porte la
+  mesure et le recadrage, `scripts/signature.test.mjs` les 5 contrôles sur les fichiers
+  livrés, dont un par rasterisation.
+- [2026-09-01] **Deux gardes automatisées encadrent le déploiement.** Une **garde de
+  configuration** en tête de job refuse de démarrer si une valeur requise est vide ou si
+  `CHEMIN_DISTANT` n'a pas son slash final : vide, `rsync --delete` viserait le répertoire
+  personnel du compte SSH. Une **garde de publication** refuse une mise en production tant
+  que subsistent des marqueurs `[À COMPLÉTER]`, un formulaire sans destinataire, un
+  JSON-LD sans téléphone, ou le `noindex` d'avant ouverture.
+- [2026-09-01] **`noindex` inconditionnel jusqu'à l'ouverture.** Le site est servi
+  publiquement sur son domaine définitif, sans authentification : la protection par mot de
+  passe a été écartée. Une seule ligne de `.htaccess` le tient hors de l'index, et la garde
+  de publication interdit de publier tant qu'elle est là, pour éviter la panne inverse,
+  un site jamais indexé.
+- [2026-09-01] **Apex canonique**, `www` en 301 vers l'apex en une seule étape.
+- [2026-09-01] **Aucune mesure d'audience au lancement.** Pas de bannière de consentement
+  à construire, section de la politique rendue affirmative. Conséquence assumée : le clic
+  téléphone, conversion n°1 selon `docs/03`, n'est pas mesuré. Pilotage sur la fiche
+  Google et Search Console.
+- [2026-09-01] **Toute la configuration du workflow vit dans les secrets**, y compris ce
+  qui n'est pas sensible. Une seule source à maintenir, contrepartie assumée : l'hôte, le
+  chemin et l'URL sortent en `***` dans les logs, et `SSH_PORT` valant `22` fait masquer
+  toutes les occurrences de « 22 ».
 - [2026-08-31] **Animations en CSS, JavaScript réduit à l'observation.** Les tokens de
   motion vivent dans `tokens.css` comme les autres. La révélation au défilement est une
   règle globale `[data-reveal]` **préfixée par `.js`** : sans JavaScript aucune opacité
@@ -235,9 +330,11 @@
 - [2026-08-30] **`<a>` si navigation, `<button>` sinon.** Un `href` (ancre, `tel:`, URL
   externe) est un lien ; sans destination c'est un bouton, `disabled` tant que le numéro
   réel manque. Jamais de `<span>` stylé en bouton.
-- [2026-08-30] **Déploiement manuel uniquement**, simulation rsync activée par défaut.
-  Un `push` automatique publierait un site non publiable. `--delete` exclut `.well-known`,
-  où Infomaniak dépose les jetons de renouvellement de certificat.
+- [2026-08-30, étendu 2026-09-01] **Déploiement manuel uniquement, par deux chemins
+  équivalents** : le workflow GitHub Actions et `npm run deploy` en local. Simulation
+  activée par défaut des deux côtés. Aucun déclencheur `push`. Le script local existe
+  parce que le rsync depuis Actions a d'abord échoué, et reste le chemin de secours.
+  `--delete` exclut `.well-known`, `.user.ini` et `.infomaniak-*`.
 - [2026-08-30] **`docs/05-contenus-accueil.md` fait foi sur les textes** de la page
   d'accueil (node Figma en regard de chaque texte). `docs/04-page-accueil.md` reste la
   source sur la structure, les deux états de section et le système de design.
@@ -253,22 +350,34 @@
   livraison quitte le block boutique** pour ne vivre que dans le block livraison.
 
 ## Bugs connus / Points d'attention
-- [2026-08-30] **4 bloquants durs de publication.** (1) Mentions légales incomplètes :
-  6 marqueurs `[À COMPLÉTER]` visibles publiquement, 4 sur la confidentialité. Manquent
-  SIRET, forme juridique, TVA, adresse de contact, nom du responsable, médiateur.
-  (2) Formulaire mort : `DESTINATAIRE` est un placeholder, le handler renvoie un 503.
-  (3) Droits d'image : la carte de la boutique est une **capture Google Maps**, les
-  13 photos sont des placeholders de maquette à provenance non établie, et l'illustration
-  livraison affiche `M Fleurs` sur l'enseigne. (4) Téléphone absent : 6 boutons `disabled`,
-  aucun `tel:`, pas de `telephone` dans le JSON-LD.
+- [2026-09-02] **L'encre de la signature fait ~6 % de plus que la maquette** : 355 px
+  contre ~334 px pour la Tangerine 76 px. Inchangé depuis l'intégration, donc pas une
+  régression du recadrage. La mesure côté maquette vient d'une lecture de capture : la
+  confirmer sur le nœud `297:31854` avant de toucher à l'échelle.
+- [2026-09-02] **Le miroir vault peut désynchroniser sans rien signaler.** Le log du
+  2026-09-01 existait dans le vault et manquait à `CC-Session-Logs/` ; comme `/ctx` ne lit
+  que le dépôt, la session de déploiement était invisible au chargement du contexte.
+  Vérifier les deux côtés.
+- [2026-08-30, révisé 2026-09-01] **3 bloquants avant ouverture.** (1) Mentions légales :
+  5 marqueurs `[À COMPLÉTER]` visibles publiquement. Manquent forme juridique,
+  SIREN/SIRET, TVA, nom de famille, médiateur. (2) Droits d'image : la carte est une
+  **capture Google Maps**, les 13 photos sont des placeholders à provenance non établie,
+  l'illustration livraison affiche `M Fleurs`. (3) Téléphone absent : 6 boutons
+  `disabled`, aucun `tel:`, pas de `telephone` dans le JSON-LD.
+  **Levés** : le formulaire est relié à `contact@matlofleurs.fr` et la politique de
+  confidentialité n'a plus aucun marqueur.
+- [2026-09-01] **La réception d'e-mail n'est pas confirmée.** `mail()` renvoyant `true`
+  prouve seulement l'acceptation par le serveur. Un message de test attend dans la boîte.
+  Si rien n'arrive : `site@matlofleurs.fr`, l'expéditeur déclaré, n'existe probablement
+  pas comme boîte réelle. Vérifier SPF, DKIM, DMARC.
 - [2026-08-30] **Block réseaux : 6 fois la même photo.** `docs/05` interdit sa mise en
   ligne sous 6 vraies publications. Monté uniquement pour valider la mise en page.
 - [2026-08-30] **Promesse « 24 h ouvrées »** écrite dans la confirmation d'envoi, jamais
   validée. À confirmer ou à retirer avant publication.
 - [2026-08-30] La maquette n'existe **qu'en desktop**. Le responsive est construit en trois
   paliers (1023, 700, 560 px) sans référence visuelle : à revoir avec une passe mobile.
-  Les amplitudes d'animation et la largeur de la signature en font partie, aucune des deux
-  n'a été contrôlée ailleurs qu'en 1440.
+  Le hero fait exception depuis le 2026-09-02 : titre et tags mesurés à 1440, 1280, 1024
+  et 560. Les amplitudes d'animation, elles, n'ont toujours été contrôlées qu'en 1440.
 
 ## Conventions de code
 - **Les commentaires n'expliquent jamais ce que fait le code.** Uniquement le « pourquoi »
@@ -282,11 +391,25 @@
   d'une seule chaîne source, condition de l'identité caractère pour caractère avec la
   fiche Google.
 - **Tests avec `node:test`**, sans dépendance ajoutée. `npm test` lit le TypeScript
-  directement. Toute donnée dupliquée dans un jeu de test porte une garde anti-dérive.
+  directement et couvre `src/**/*.test.ts` **plus** `scripts/*.test.mjs`. Toute donnée
+  dupliquée dans un jeu de test porte une garde anti-dérive.
 - **Styles scopés dans les composants Astro**, pas de feuille globale hors `base.css`.
 
 ## Historique récent
 <!-- /mem ajoute ici, archivage auto après 30 jours -->
+- [2026-09-02] **Hero réaligné sur la maquette.** Trois écarts signalés, deux causes
+  racines : la largeur de contenu du site entier, fausse de 96 px sur les 11 wrappers, et
+  un SVG de signature vide à 45 % de sa hauteur qui creusait un blanc dans le `<h1>`.
+  Correction validée par mesure CDP et non à l'œil, garde-fou en `cqw` pour tenir le titre
+  sur une ligne jusqu'en 560. Piège trouvé au passage : recadrer la `viewBox` seule
+  effaçait le tiers bas du tracé animé. 18 tests, build propre. Log :
+  `CC-Session-Logs/2026-09-02_hero-conforme-maquette.md`.
+- [2026-09-01] **Mise en ligne sur Infomaniak.** Hébergement configuré, CI/CD câblée,
+  site déployé et vérifié en production : 15 contrôles au vert dont le premier test réel
+  d'Apache et de PHP. Quatre échecs diagnostiqués en route, dont un timeout SSH qui m'a
+  fait conclure à tort à une impossibilité du mutualisé, corrigé par le workflow du projet
+  adaptours. `mail()` était désactivée par défaut. Log :
+  `CC-Session-Logs/2026-09-01_mise-en-ligne-infomaniak.md`.
 - [2026-08-31] **Animations de la page d'accueil.** Socle de motion, révélation au
   défilement sur 16 cibles avec garde `.js`, cascade d'entrée du hero, micro-interactions
   limitées aux éléments réellement cliquables. La ligne « façonnées à la main » est un SVG

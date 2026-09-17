@@ -10,16 +10,16 @@ const manquant = (quoi: string) => `[À COMPLÉTER : ${quoi}]`;
 <PageTexte titre={titre} description={description} chemin="/mentions-legales" h1="Mentions légales">
   <h2>Éditeur du site</h2>
   <p>
-    {site.nom}, {manquant('forme juridique')}<br />
+    {site.nom}, {site.forme}<br />
     Siège social : {adresseComplete.replace('\n', ', ')}<br />
-    {manquant('numéro SIREN ou SIRET')}<br />
+    SIRET : {site.siret}<br />
     {manquant('numéro de TVA intracommunautaire, ou mention de non-assujettissement')}<br />
     Téléphone : {site.telephone.affiche}<br />
     Courriel : {site.email}
   </p>
 
   <h2>Responsable de la publication</h2>
-  <p>{site.fleuriste} {manquant('nom de famille')}</p>
+  <p>{site.fleuriste}</p>
 
   <h2>Hébergeur</h2>
   <p>
