@@ -64,7 +64,7 @@ const plan = `https://www.google.com/maps/search/?api=1&query=${requete}`;
           <IconeTelephone class="boutique__icone" aria-hidden="true" />
           {
             site.telephone.lien ? (
-              <a class="boutique__tel" href={`tel:${site.telephone.lien}`}>
+              <a class="boutique__tel" href={site.telephone.lien}>
                 {site.telephone.affiche}
               </a>
             ) : (

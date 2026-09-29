@@ -6,7 +6,7 @@ import { site } from '../data/site';
 
 const { communes, rayonKm, partenaireNational } = site.livraison;
 const listeCommunes = `${communes.slice(0, -1).join(', ')} et ${communes.at(-1)}`;
-const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined;
+const telephone = site.telephone.lien;
 
 // Phrases assemblées ici : une expression en fin de ligne perd l'espace qui la
 // précède au moment de la compilation du gabarit.

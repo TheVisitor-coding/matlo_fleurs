@@ -14,7 +14,7 @@ const entrees = [
   { libelle: 'Contact', href: site.ancres.contact },
 ] as const;
 
-const telephone = site.telephone.lien ? `tel:${site.telephone.lien}` : undefined;
+const telephone = site.telephone.lien;
 ---
 
 <header class="entete" data-entete>

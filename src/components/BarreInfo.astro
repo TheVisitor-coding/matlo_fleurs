@@ -16,7 +16,7 @@ const horaires = site.horaires.map((j) => ({ iso: j.iso, plages: j.plages }));
     <span class="barre-info__separateur" aria-hidden="true">·</span>
     {
       site.telephone.lien ? (
-        <a class="barre-info__item barre-info__tel" href={`tel:${site.telephone.lien}`}>
+        <a class="barre-info__item barre-info__tel" href={site.telephone.lien}>
           {site.telephone.affiche}
         </a>
       ) : (

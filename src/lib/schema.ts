@@ -52,7 +52,7 @@ export function florist(url: string) {
       '@type': 'City',
       name: commune,
     })),
-    ...(site.telephone.lien !== null && { telephone: site.telephone.lien }),
+    ...(site.telephone.lien !== null && { telephone: site.telephone.lien.replace('tel:', '') }),
     ...(reseaux.length > 0 && { sameAs: reseaux }),
   };
 }
