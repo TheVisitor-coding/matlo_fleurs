@@ -13,7 +13,7 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
   class="consentement"
   aria-labelledby="consentement-titre"
   data-finalites={JSON.stringify(finalitesActives)}
-  data-google-analytics={site.mesure.googleAnalytics}
+  data-google-tag-manager={site.mesure.googleTagManager}
   data-clarity={site.mesure.clarity}
   hidden
 >
@@ -87,16 +87,11 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
     document.head.append(script);
   }
 
-  function chargerGoogleAnalytics(id: string) {
+  function chargerGoogleTagManager(id: string) {
     window.dataLayer = window.dataLayer || [];
-    // gtag exige l'objet `arguments` lui-même, un tableau n'est pas reconnu.
-    function gtag(..._: unknown[]) {
-      window.dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-    // Par défaut _ga vit 2 ans, la CNIL plafonne à 13 mois.
-    gtag('config', id, { cookie_expires: 13 * 30 * 24 * 60 * 60 });
-    chargerScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`);
+    // La durée des cookies _ga se règle dans la balise GA4 du conteneur, pas ici.
+    window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+    chargerScript(`https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(id)}`);
   }
 
   function chargerClarity(id: string) {
@@ -126,7 +121,7 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
 
   if (bandeau) {
     const actives = JSON.parse(bandeau.dataset.finalites ?? '[]') as Finalite[];
-    const { googleAnalytics, clarity } = bandeau.dataset;
+    const { googleTagManager, clarity } = bandeau.dataset;
     const details = bandeau.querySelector<HTMLElement>('.consentement__details')!;
     const personnaliser = bandeau.querySelector<HTMLElement>('.consentement__personnaliser')!;
     const enregistrer = bandeau.querySelector<HTMLElement>('.consentement__enregistrer')!;
@@ -136,7 +131,7 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
 
     const appliquer = (choix: Choix) => {
       if (choix.audience && !audienceChargee) {
-        if (googleAnalytics) chargerGoogleAnalytics(googleAnalytics);
+        if (googleTagManager) chargerGoogleTagManager(googleTagManager);
         if (clarity) chargerClarity(clarity);
         audienceChargee = true;
       } else if (choix.audience === false) {

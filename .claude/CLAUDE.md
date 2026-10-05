@@ -288,13 +288,17 @@
   un site jamais indexé.
 - [2026-09-01] **Apex canonique**, `www` en 301 vers l'apex en une seule étape.
 - [2026-10-05, révisé 2026-09-01] **Bandeau de consentement, mesure d'audience prévue.**
-  Google Analytics et Clarity viendront : leurs identifiants vivent dans `site.mesure`, et
-  tant qu'un identifiant est `null` l'outil n'est ni chargé, ni proposé, ni décrit. La
+  Mesure par **Google Tag Manager** (`GTM-KP8B54SZ`, qui porte GA4) et **Clarity** : les
+  identifiants vivent dans `site.mesure`, et tant qu'un identifiant est `null` l'outil
+  n'est ni chargé, ni proposé, ni décrit. Le `<noscript>` de GTM est volontairement omis :
+  il chargerait Google sans consentement possible. La durée des cookies `_ga` (13 mois au
+  plus) se règle dans la balise GA4 du conteneur, le code n'y a pas accès. La
   liste `src/data/services.ts` alimente à la fois le bandeau et la politique de
   confidentialité. La carte Google Maps est créée **après accord seulement** : en iframe
   servie au rendu, elle déposait des cookies que la politique niait. Choix conservé
-  6 mois en `localStorage`, redemandé si une finalité s'ajoute. Chargeurs GA et Clarity
-  jamais éprouvés faute d'identifiant : les vérifier au premier branchement.
+  6 mois en `localStorage`, redemandé si une finalité s'ajoute. Éprouvé en CDP le
+  2026-10-05 : aucune requête tierce avant accord, cookies `_clck`/`_clsk` effacés au
+  retrait. Les cookies posés sur les domaines de Microsoft restent hors de portée.
 - [2026-09-01] **Toute la configuration du workflow vit dans les secrets**, y compris ce
   qui n'est pas sensible. Une seule source à maintenir, contrepartie assumée : l'hôte, le
   chemin et l'URL sortent en `***` dans les logs, et `SSH_PORT` valant `22` fait masquer

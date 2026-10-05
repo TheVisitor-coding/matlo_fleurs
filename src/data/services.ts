@@ -36,7 +36,8 @@ const googleAnalytics: Service = {
   finalite: 'audience',
   nom: 'Google Analytics',
   editeur: 'Google Ireland Limited',
-  usage: 'Statistiques de fréquentation : pages vues, durée de visite, provenance.',
+  usage:
+    'Statistiques de fréquentation (pages vues, durée de visite, provenance), chargées par Google Tag Manager.',
   cookies: '_ga et _ga_*, 13 mois au plus.',
   confidentialite: 'https://policies.google.com/privacy',
 };
@@ -53,7 +54,7 @@ const clarity: Service = {
 
 export const services: readonly Service[] = [
   googleMaps,
-  ...(site.mesure.googleAnalytics ? [googleAnalytics] : []),
+  ...(site.mesure.googleTagManager ? [googleAnalytics] : []),
   ...(site.mesure.clarity ? [clarity] : []),
 ];
 
