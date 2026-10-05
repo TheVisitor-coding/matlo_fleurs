@@ -2,6 +2,7 @@
 import { Font } from 'astro:assets';
 import { site } from '../data/site';
 import { florist } from '../lib/schema';
+import Consentement from '../components/Consentement.astro';
 import '../styles/base.css';
 
 interface Props {
@@ -66,6 +67,7 @@ const schema = donneesStructurees ? florist(canonique) : null;
   </head>
   <body>
     <slot />
+    <Consentement />
 
     <script>
       const cibles = document.querySelectorAll('[data-reveal]');

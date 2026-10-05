@@ -18,14 +18,21 @@ const carteEmbed = `https://www.google.com/maps?q=${adresseRequete}&output=embed
     <TitreSection ligne1={`Notre boutique à ${site.adresse.ville} : adresse et horaires`} />
 
     <div class="boutique__colonnes">
-      <div class="boutique__carte">
-        <iframe
-          class="boutique__carte-iframe"
-          src={carteEmbed}
-          title={`Carte de situation de la boutique, ${site.adresse.ligne1} à ${site.adresse.ville}`}
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-        ></iframe>
+      <div
+        class="boutique__carte"
+        data-carte={carteEmbed}
+        data-titre={`Carte de situation de la boutique, ${site.adresse.ligne1} à ${site.adresse.ville}`}
+      >
+        {/* L'iframe dépose des cookies Google dès son chargement : elle n'est
+            créée qu'après accord, sans quoi le bandeau ne protégerait de rien. */}
+        <div class="boutique__attente">
+          <p class="boutique__attente-texte">
+            Le plan est fourni par Google Maps, qui dépose des cookies.
+          </p>
+          <Bouton variante="secondaire" disabled={false} data-afficher-carte>
+            Afficher la carte
+          </Bouton>
+        </div>
         <span class="boutique__plan">
           <Bouton href={plan} externe>Ouvrir le plan</Bouton>
         </span>
@@ -76,11 +83,40 @@ const carteEmbed = `https://www.google.com/maps?q=${adresseRequete}&output=embed
 
 <script>
   import { maintenantBoutique } from '../lib/horaires';
+  import { choixCourant, enregistrerChoix, surChangement, type Choix } from '../lib/consentement';
 
   const { iso } = maintenantBoutique(new Date());
   document
     .querySelector(`.boutique__horaires tr[data-jour="${iso}"]`)
     ?.classList.add('boutique__jour--courant');
+
+  const carte = document.querySelector<HTMLElement>('.boutique__carte');
+
+  if (carte) {
+    const attente = carte.querySelector<HTMLElement>('.boutique__attente')!;
+
+    const afficher = ({ cartes }: Choix) => {
+      const iframe = carte.querySelector('iframe');
+      if (cartes && !iframe) {
+        const nouvelle = document.createElement('iframe');
+        nouvelle.className = 'boutique__carte-iframe';
+        nouvelle.src = carte.dataset.carte!;
+        nouvelle.title = carte.dataset.titre!;
+        nouvelle.loading = 'lazy';
+        nouvelle.referrerPolicy = 'no-referrer-when-downgrade';
+        carte.prepend(nouvelle);
+      } else if (!cartes && iframe) {
+        iframe.remove();
+      }
+      attente.hidden = Boolean(cartes);
+    };
+
+    carte
+      .querySelector('[data-afficher-carte]')
+      ?.addEventListener('click', () => enregistrerChoix({ cartes: true }));
+    surChangement(afficher);
+    afficher(choixCourant());
+  }
 </script>
 
 <style>
@@ -109,12 +145,39 @@ const carteEmbed = `https://www.google.com/maps?q=${adresseRequete}&output=embed
     height: 402px;
     border-radius: 8px;
     overflow: hidden;
+    background: var(--fond-creme);
   }
 
-  .boutique__carte-iframe {
+  /* Créée par le script, elle échappe au scope du composant. */
+  .boutique__carte :global(.boutique__carte-iframe) {
     width: 100%;
     height: 100%;
     border: 0;
+  }
+
+  .boutique__attente {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--espace-2);
+    height: 100%;
+    padding: var(--espace-3) var(--espace-3) var(--espace-6);
+    text-align: center;
+  }
+
+  .boutique__attente[hidden] {
+    display: none;
+  }
+
+  .boutique__attente-texte {
+    margin: 0;
+    font-size: var(--taille-carte);
+  }
+
+  /* Sans JavaScript, le bouton ne ferait rien : le lien « Ouvrir le plan » reste. */
+  :global(html:not(.js)) .boutique__attente :global(.bouton) {
+    display: none;
   }
 
   .boutique__plan {

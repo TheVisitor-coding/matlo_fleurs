@@ -4,7 +4,6 @@ import { site, adresseComplete } from '../data/site';
 
 const titre = `Mentions légales · ${site.nom}`;
 const description = `Mentions légales du site ${site.nom}, artisan fleuriste à ${site.adresse.ville}.`;
-const manquant = (quoi: string) => `[À COMPLÉTER : ${quoi}]`;
 ---
 
 <PageTexte titre={titre} description={description} chemin="/mentions-legales" h1="Mentions légales">
@@ -13,7 +12,7 @@ const manquant = (quoi: string) => `[À COMPLÉTER : ${quoi}]`;
     {site.nom}, {site.forme}<br />
     Siège social : {adresseComplete.replace('\n', ', ')}<br />
     SIRET : {site.siret}<br />
-    {manquant('numéro de TVA intracommunautaire, ou mention de non-assujettissement')}<br />
+    TVA : {site.tva}<br />
     Téléphone : {site.telephone.affiche}<br />
     Courriel : {site.email}
   </p>
@@ -45,6 +44,6 @@ const manquant = (quoi: string) => `[À COMPLÉTER : ${quoi}]`;
   <p>
     Conformément à l'article L.612-1 du code de la consommation, tout consommateur a le droit
     de recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable
-    d'un litige. {manquant('nom et coordonnées du médiateur retenu')}
+    d'un litige.
   </p>
 </PageTexte>

@@ -9,7 +9,8 @@ export const site = {
   baseline: 'Artisan Fleuriste',
   metier: 'Fleuriste artisanale à Challans',
   fleuriste: 'Stéphanie ROY',
-  siret: '1098403220009',
+  tva: 'FR47109840322',
+  siret: '10984032200019',
   forme: 'SARL',
 
   adresse: {
@@ -59,6 +60,13 @@ export const site = {
   reseaux: {
     instagram: 'https://www.instagram.com/matlofleurs/',
     facebook: null,
+  },
+
+  // Tant qu'un identifiant manque, l'outil n'est ni chargé, ni proposé dans le
+  // bandeau de consentement, ni décrit dans la politique de confidentialité.
+  mesure: {
+    googleAnalytics: null as string | null,
+    clarity: null as string | null,
   },
 
   // Figées : chacune sera remplacée par une URL le jour où sa page existera,

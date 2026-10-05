@@ -36,6 +36,8 @@ const annee = new Date().getFullYear();
       <a href="/mentions-legales">Mentions légales</a>
       <EtoilePied class="pied__etoile" aria-hidden="true" />
       <a href="/politique-de-confidentialite">Politique de confidentialité</a>
+      <EtoilePied class="pied__etoile" aria-hidden="true" />
+      <button type="button" class="pied__cookies" data-ouvrir-consentement>Gestion des cookies</button>
     </p>
   </div>
 </footer>
@@ -151,14 +153,25 @@ const annee = new Date().getFullYear();
     text-transform: uppercase;
   }
 
-  .pied__legal a {
+  .pied__legal a,
+  .pied__cookies {
     color: var(--texte-inverse);
     text-decoration: none;
     transition: color var(--duree-moyenne) var(--easing-sortie);
   }
 
+  .pied__cookies {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+  }
+
   .pied__legal a:hover,
-  .pied__legal a:focus-visible {
+  .pied__legal a:focus-visible,
+  .pied__cookies:hover,
+  .pied__cookies:focus-visible {
     color: var(--couleur-taupe);
   }
 

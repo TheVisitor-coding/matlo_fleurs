@@ -1,9 +1,11 @@
 ---
 import PageTexte from '../layouts/PageTexte.astro';
 import { site } from '../data/site';
+import { finalites, services } from '../data/services';
 
+const mesureAudience = services.some((service) => service.finalite === 'audience');
 const titre = `Politique de confidentialité · ${site.nom}`;
-const description = `Comment ${site.nom} traite les données transmises par le formulaire de contact.`;
+const description = `Comment ${site.nom} traite les données transmises par le formulaire de contact et gère les cookies.`;
 ---
 
 <PageTexte
@@ -25,8 +27,9 @@ const description = `Comment ${site.nom} traite les données transmises par le f
     souhaitée et contenu de votre message.
   </p>
   <p>
-    Nous ne recueillons aucune autre donnée. Le site ne dépose pas de cookie publicitaire et
-    n'utilise aucun traceur à des fins de profilage.
+    En dehors des services décrits plus bas, qui ne fonctionnent qu'avec votre accord, nous ne
+    recueillons aucune autre donnée. Le site ne dépose pas de cookie publicitaire et n'utilise
+    aucun traceur à des fins de profilage.
   </p>
 
   <h2>Pourquoi nous les recueillons</h2>
@@ -51,19 +54,64 @@ const description = `Comment ${site.nom} traite les données transmises par le f
   <h2>Vos droits</h2>
   <p>
     Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation et
-    d'opposition sur vos données. Pour l'exercer, écrivez-nous à {site.email}
+    d'opposition sur vos données. Pour l'exercer, écrivez-nous à {site.email}{' '}
     ou appelez le {site.telephone.affiche}. Nous répondons dans un délai d'un mois.
   </p>
   <p>
     Si notre réponse ne vous satisfait pas, vous pouvez saisir la Commission nationale de
-    l'informatique et des libertés (CNIL), 3 place de Fontenoy, 75334 Paris Cedex 07,
+    l'informatique et des libertés (CNIL), 3 place de Fontenoy, 75334 Paris Cedex 07,{' '}
     <a href="https://www.cnil.fr" rel="noopener" target="_blank">cnil.fr</a>.
   </p>
 
-  <h2>Mesure d'audience</h2>
+  <h2>Cookies et services tiers</h2>
   <p>
-    Aucune. Le site ne mesure pas sa fréquentation, ne dépose aucun cookie et n'appelle aucun
-    service tiers d'analyse. Les seules statistiques dont nous disposons sont celles de notre
-    fiche Google, qui ne nous transmet aucune donnée personnelle.
+    Aucun cookie n'est déposé sans votre accord. À votre première visite, un bandeau vous
+    demande votre choix, service par service si vous le souhaitez. Ce choix est conservé six
+    mois dans votre navigateur, puis vous est redemandé. Refuser ne vous prive d'aucune
+    information : l'adresse et le lien vers le plan restent affichés.
   </p>
+  <p>
+    Vous pouvez changer d'avis à tout moment :{' '}
+    <button type="button" class="politique__cookies" data-ouvrir-consentement>
+      gérer mes cookies
+    </button>.
+  </p>
+  <ul>
+    {
+      services.map((service) => (
+        <li>
+          <strong>{service.nom}</strong> ({finalites[service.finalite].titre.toLowerCase()}),
+          édité par {service.editeur}. {service.usage} Cookies : {service.cookies}{' '}
+          <a href={service.confidentialite} rel="noopener" target="_blank">
+            Sa politique de confidentialité
+          </a>
+          .
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    !mesureAudience && (
+      <>
+        <h2>Mesure d'audience</h2>
+        <p>
+          Aucune pour le moment. Les seules statistiques dont nous disposons sont celles de
+          notre fiche Google, qui ne nous transmet aucune donnée personnelle.
+        </p>
+      </>
+    )
+  }
 </PageTexte>
+
+<style>
+  .politique__cookies {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>

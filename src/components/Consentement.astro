@@ -1,0 +1,347 @@
+---
+import Bouton from './Bouton.astro';
+import { site } from '../data/site';
+import { finalites, finalitesActives } from '../data/services';
+
+const liste = finalitesActives.map((finalite) => finalites[finalite].titre.toLowerCase()).join(', ');
+const phrase = `Avec votre accord, ce site fait appel à des services qui déposent des cookies : ${liste}. Vous pouvez changer d'avis à tout moment depuis le bas de page.`;
+---
+
+{/* Masqué au rendu : sans JavaScript, aucun service tiers ne se charge, il n'y a
+    donc rien à demander. */}
+<section
+  class="consentement"
+  aria-labelledby="consentement-titre"
+  data-finalites={JSON.stringify(finalitesActives)}
+  data-google-analytics={site.mesure.googleAnalytics}
+  data-clarity={site.mesure.clarity}
+  hidden
+>
+  <div class="consentement__wrapper">
+    <div class="consentement__texte">
+      <h2 class="consentement__titre" id="consentement-titre" tabindex="-1">Vos préférences</h2>
+      <p class="consentement__phrase">
+        {phrase}{' '}
+        <a href="/politique-de-confidentialite">En savoir plus</a>
+      </p>
+
+      <fieldset class="consentement__details" hidden>
+        <legend class="hors-ecran">Votre choix, service par service</legend>
+        {
+          finalitesActives.map((finalite) => (
+            <label class="consentement__finalite">
+              <input type="checkbox" name="finalite" value={finalite} />
+              <span>
+                <strong>{finalites[finalite].titre}</strong>
+                <span class="consentement__description">{finalites[finalite].description}</span>
+              </span>
+            </label>
+          ))
+        }
+      </fieldset>
+    </div>
+
+    {/* Refuser et accepter ont exactement le même poids visuel : exigence CNIL. */}
+    <div class="consentement__actions">
+      <Bouton variante="secondaire" inverse disabled={false} data-action="refuser">
+        Tout refuser
+      </Bouton>
+      <Bouton variante="secondaire" inverse disabled={false} data-action="accepter">
+        Tout accepter
+      </Bouton>
+      <button type="button" class="consentement__personnaliser" data-action="personnaliser">
+        Personnaliser
+      </button>
+      <span class="consentement__enregistrer" hidden>
+        <Bouton variante="secondaire" inverse disabled={false} data-action="enregistrer">
+          Enregistrer mes choix
+        </Bouton>
+      </span>
+    </div>
+  </div>
+</section>
+
+<script>
+  import {
+    choixComplet,
+    choixCourant,
+    enregistrerChoix,
+    surChangement,
+    type Choix,
+    type Finalite,
+  } from '../lib/consentement';
+
+  declare global {
+    interface Window {
+      dataLayer: unknown[];
+      clarity?: (...args: unknown[]) => void;
+    }
+  }
+
+  const bandeau = document.querySelector<HTMLElement>('.consentement');
+
+  function chargerScript(src: string) {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = src;
+    document.head.append(script);
+  }
+
+  function chargerGoogleAnalytics(id: string) {
+    window.dataLayer = window.dataLayer || [];
+    // gtag exige l'objet `arguments` lui-même, un tableau n'est pas reconnu.
+    function gtag(..._: unknown[]) {
+      window.dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    // Par défaut _ga vit 2 ans, la CNIL plafonne à 13 mois.
+    gtag('config', id, { cookie_expires: 13 * 30 * 24 * 60 * 60 });
+    chargerScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`);
+  }
+
+  function chargerClarity(id: string) {
+    // Même file d'attente que le snippet officiel, qui y range l'objet `arguments`.
+    const file: IArguments[] = [];
+    window.clarity = Object.assign(
+      function (..._: unknown[]) {
+        file.push(arguments);
+      },
+      { q: file },
+    );
+    // Sans ce signal, Clarity traite un visiteur européen comme non consentant.
+    window.clarity('consent');
+    chargerScript(`https://www.clarity.ms/tag/${encodeURIComponent(id)}`);
+  }
+
+  function effacerCookiesAudience() {
+    const racine = location.hostname.replace(/^www\./, '');
+    for (const cookie of document.cookie.split(';')) {
+      const nom = cookie.split('=')[0].trim();
+      if (!/^(_ga|_gid|_clck|_clsk)/.test(nom)) continue;
+      for (const domaine of ['', `; domain=${location.hostname}`, `; domain=.${racine}`]) {
+        document.cookie = `${nom}=; max-age=0; path=/${domaine}`;
+      }
+    }
+  }
+
+  if (bandeau) {
+    const actives = JSON.parse(bandeau.dataset.finalites ?? '[]') as Finalite[];
+    const { googleAnalytics, clarity } = bandeau.dataset;
+    const details = bandeau.querySelector<HTMLElement>('.consentement__details')!;
+    const personnaliser = bandeau.querySelector<HTMLElement>('.consentement__personnaliser')!;
+    const enregistrer = bandeau.querySelector<HTMLElement>('.consentement__enregistrer')!;
+    const cases = bandeau.querySelectorAll<HTMLInputElement>('input[name="finalite"]');
+
+    let audienceChargee = false;
+
+    const appliquer = (choix: Choix) => {
+      if (choix.audience && !audienceChargee) {
+        if (googleAnalytics) chargerGoogleAnalytics(googleAnalytics);
+        if (clarity) chargerClarity(clarity);
+        audienceChargee = true;
+      } else if (choix.audience === false) {
+        effacerCookiesAudience();
+        // Un script déjà chargé ne se décharge pas : seul un rechargement l'arrête.
+        if (audienceChargee) location.reload();
+      }
+    };
+
+    const deplier = (ouvert: boolean) => {
+      details.hidden = !ouvert;
+      enregistrer.hidden = !ouvert;
+      personnaliser.hidden = ouvert;
+    };
+
+    const ouvrir = () => {
+      const choix = choixCourant();
+      cases.forEach((caseACocher) => {
+        caseACocher.checked = choix[caseACocher.value as Finalite] === true;
+      });
+      deplier(false);
+      bandeau.hidden = false;
+      bandeau.querySelector<HTMLElement>('.consentement__titre')!.focus();
+    };
+
+    const tout = (valeur: boolean): Choix =>
+      Object.fromEntries(actives.map((finalite) => [finalite, valeur]));
+
+    bandeau.addEventListener('click', (evenement) => {
+      const action = (evenement.target as Element).closest<HTMLElement>('[data-action]')?.dataset
+        .action;
+      if (action === 'personnaliser') {
+        deplier(true);
+        cases[0]?.focus();
+        return;
+      }
+
+      const choix =
+        action === 'accepter'
+          ? tout(true)
+          : action === 'refuser'
+            ? tout(false)
+            : action === 'enregistrer'
+              ? Object.fromEntries(
+                  [...cases].map((caseACocher) => [caseACocher.value, caseACocher.checked]),
+                )
+              : null;
+      if (!choix) return;
+
+      enregistrerChoix(choix);
+      bandeau.hidden = true;
+    });
+
+    document
+      .querySelectorAll('[data-ouvrir-consentement]')
+      .forEach((bouton) => bouton.addEventListener('click', ouvrir));
+
+    surChangement((choix) => {
+      appliquer(choix);
+      // Un choix fait ailleurs, comme « Afficher la carte », peut suffire à tout couvrir.
+      if (choixComplet(choix, actives)) bandeau.hidden = true;
+    });
+    appliquer(choixCourant());
+    if (!choixComplet(choixCourant(), actives)) bandeau.hidden = false;
+  }
+</script>
+
+<style>
+  .consentement {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 100;
+    max-height: 100dvh;
+    overflow-y: auto;
+    border-top: 1px solid var(--couleur-filet-inverse);
+    background: var(--fond-inverse);
+    color: var(--texte-inverse);
+    padding-block: var(--espace-3);
+  }
+
+  .consentement[hidden] {
+    display: none;
+  }
+
+  .consentement__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espace-3) var(--espace-4);
+    max-width: var(--largeur-page);
+    margin-inline: auto;
+    padding-inline: var(--espace-5);
+  }
+
+  .consentement__texte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-1);
+    min-width: 0;
+  }
+
+  .consentement__titre {
+    margin: 0;
+    font-size: var(--taille-carte-titre);
+    letter-spacing: 0;
+  }
+
+  .consentement__titre:focus {
+    outline: none;
+  }
+
+  .consentement__phrase {
+    margin: 0;
+    font-size: var(--taille-carte);
+  }
+
+  .consentement a,
+  .consentement__personnaliser {
+    color: var(--texte-accent-inverse);
+  }
+
+  .consentement__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-1);
+    margin: var(--espace-1) 0 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .consentement__details[hidden] {
+    display: none;
+  }
+
+  .consentement__finalite {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--espace-1);
+    font-size: var(--taille-carte);
+    cursor: pointer;
+  }
+
+  .consentement__finalite input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    accent-color: var(--couleur-sauge-claire);
+  }
+
+  .consentement__finalite strong {
+    display: block;
+    font-weight: var(--graisse-corps);
+  }
+
+  .consentement__actions {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--espace-1);
+  }
+
+  .consentement__personnaliser {
+    min-height: 44px;
+    padding: 0 var(--espace-1);
+    border: 0;
+    background: none;
+    font-family: var(--famille-label);
+    font-size: var(--taille-label);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .consentement__personnaliser[hidden],
+  .consentement__enregistrer[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 899px) {
+    .consentement__wrapper {
+      flex-direction: column;
+      align-items: stretch;
+      padding-inline: var(--espace-3);
+    }
+
+    .consentement__actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      justify-content: stretch;
+    }
+
+    .consentement__personnaliser,
+    .consentement__enregistrer {
+      grid-column: 1 / -1;
+    }
+
+    .consentement__actions :global(.bouton) {
+      width: 100%;
+    }
+
+    .consentement__actions :global(.bouton__cadre) {
+      padding-inline: var(--espace-1);
+    }
+  }
+</style>

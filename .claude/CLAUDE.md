@@ -287,10 +287,14 @@
   de publication interdit de publier tant qu'elle est là, pour éviter la panne inverse,
   un site jamais indexé.
 - [2026-09-01] **Apex canonique**, `www` en 301 vers l'apex en une seule étape.
-- [2026-09-01] **Aucune mesure d'audience au lancement.** Pas de bannière de consentement
-  à construire, section de la politique rendue affirmative. Conséquence assumée : le clic
-  téléphone, conversion n°1 selon `docs/03`, n'est pas mesuré. Pilotage sur la fiche
-  Google et Search Console.
+- [2026-10-05, révisé 2026-09-01] **Bandeau de consentement, mesure d'audience prévue.**
+  Google Analytics et Clarity viendront : leurs identifiants vivent dans `site.mesure`, et
+  tant qu'un identifiant est `null` l'outil n'est ni chargé, ni proposé, ni décrit. La
+  liste `src/data/services.ts` alimente à la fois le bandeau et la politique de
+  confidentialité. La carte Google Maps est créée **après accord seulement** : en iframe
+  servie au rendu, elle déposait des cookies que la politique niait. Choix conservé
+  6 mois en `localStorage`, redemandé si une finalité s'ajoute. Chargeurs GA et Clarity
+  jamais éprouvés faute d'identifiant : les vérifier au premier branchement.
 - [2026-09-01] **Toute la configuration du workflow vit dans les secrets**, y compris ce
   qui n'est pas sensible. Une seule source à maintenir, contrepartie assumée : l'hôte, le
   chemin et l'URL sortent en `***` dans les logs, et `SSH_PORT` valant `22` fait masquer
@@ -358,26 +362,15 @@
   2026-09-01 existait dans le vault et manquait à `CC-Session-Logs/` ; comme `/ctx` ne lit
   que le dépôt, la session de déploiement était invisible au chargement du contexte.
   Vérifier les deux côtés.
-- [2026-08-30, révisé 2026-09-01] **3 bloquants avant ouverture.** (1) Mentions légales :
-  5 marqueurs `[À COMPLÉTER]` visibles publiquement. Manquent forme juridique,
-  SIREN/SIRET, TVA, nom de famille, médiateur. (2) Droits d'image : la carte est une
-  **capture Google Maps**, les 13 photos sont des placeholders à provenance non établie,
-  l'illustration livraison affiche `M Fleurs`. (3) Téléphone absent : 6 boutons
-  `disabled`, aucun `tel:`, pas de `telephone` dans le JSON-LD.
-  **Levés** : le formulaire est relié à `contact@matlofleurs.fr` et la politique de
-  confidentialité n'a plus aucun marqueur.
-- [2026-09-01] **La réception d'e-mail n'est pas confirmée.** `mail()` renvoyant `true`
-  prouve seulement l'acceptation par le serveur. Un message de test attend dans la boîte.
-  Si rien n'arrive : `site@matlofleurs.fr`, l'expéditeur déclaré, n'existe probablement
-  pas comme boîte réelle. Vérifier SPF, DKIM, DMARC.
+- [2026-10-05] **Ouverture décidée sans médiateur de la consommation.** Obligation légale
+  non remplie (art. L.612-1), choix assumé par le client ; la mention reste sans nom.
+  Téléphone et TVA renseignés. Les images de `src/assets/provisoires/` sont acceptées
+  telles quelles pour le lancement, droits d'image compris.
 - [2026-08-30] **Block réseaux : 6 fois la même photo.** `docs/05` interdit sa mise en
   ligne sous 6 vraies publications. Monté uniquement pour valider la mise en page.
 - [2026-08-30] **Promesse « 24 h ouvrées »** écrite dans la confirmation d'envoi, jamais
   validée. À confirmer ou à retirer avant publication.
-- [2026-08-30] La maquette n'existe **qu'en desktop**. Le responsive est construit en trois
-  paliers (1023, 700, 560 px) sans référence visuelle : à revoir avec une passe mobile.
-  Le hero fait exception depuis le 2026-09-02 : titre et tags mesurés à 1440, 1280, 1024
-  et 560. Les amplitudes d'animation, elles, n'ont toujours été contrôlées qu'en 1440.
+- [2026-10-05] Responsive validé par le client sur appareil réel, sans maquette mobile.
 
 ## Conventions de code
 - **Les commentaires n'expliquent jamais ce que fait le code.** Uniquement le « pourquoi »
