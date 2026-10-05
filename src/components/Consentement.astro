@@ -13,7 +13,6 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
   class="consentement"
   aria-labelledby="consentement-titre"
   data-finalites={JSON.stringify(finalitesActives)}
-  data-google-tag-manager={site.mesure.googleTagManager}
   data-clarity={site.mesure.clarity}
   hidden
 >
@@ -73,7 +72,6 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
 
   declare global {
     interface Window {
-      dataLayer: unknown[];
       clarity?: (...args: unknown[]) => void;
     }
   }
@@ -85,13 +83,6 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
     script.async = true;
     script.src = src;
     document.head.append(script);
-  }
-
-  function chargerGoogleTagManager(id: string) {
-    window.dataLayer = window.dataLayer || [];
-    // La durée des cookies _ga se règle dans la balise GA4 du conteneur, pas ici.
-    window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
-    chargerScript(`https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(id)}`);
   }
 
   function chargerClarity(id: string) {
@@ -112,7 +103,7 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
     const racine = location.hostname.replace(/^www\./, '');
     for (const cookie of document.cookie.split(';')) {
       const nom = cookie.split('=')[0].trim();
-      if (!/^(_ga|_gid|_clck|_clsk)/.test(nom)) continue;
+      if (!/^(_clck|_clsk)/.test(nom)) continue;
       for (const domaine of ['', `; domain=${location.hostname}`, `; domain=.${racine}`]) {
         document.cookie = `${nom}=; max-age=0; path=/${domaine}`;
       }
@@ -121,7 +112,7 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
 
   if (bandeau) {
     const actives = JSON.parse(bandeau.dataset.finalites ?? '[]') as Finalite[];
-    const { googleTagManager, clarity } = bandeau.dataset;
+    const { clarity } = bandeau.dataset;
     const details = bandeau.querySelector<HTMLElement>('.consentement__details')!;
     const personnaliser = bandeau.querySelector<HTMLElement>('.consentement__personnaliser')!;
     const enregistrer = bandeau.querySelector<HTMLElement>('.consentement__enregistrer')!;
@@ -131,7 +122,6 @@ const phrase = `Avec votre accord, ce site fait appel à des services qui dépos
 
     const appliquer = (choix: Choix) => {
       if (choix.audience && !audienceChargee) {
-        if (googleTagManager) chargerGoogleTagManager(googleTagManager);
         if (clarity) chargerClarity(clarity);
         audienceChargee = true;
       } else if (choix.audience === false) {

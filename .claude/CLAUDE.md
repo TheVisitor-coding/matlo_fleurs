@@ -288,11 +288,11 @@
   un site jamais indexé.
 - [2026-09-01] **Apex canonique**, `www` en 301 vers l'apex en une seule étape.
 - [2026-10-05, révisé 2026-09-01] **Bandeau de consentement, mesure d'audience prévue.**
-  Mesure par **Google Tag Manager** (`GTM-KP8B54SZ`, qui porte GA4) et **Clarity** : les
-  identifiants vivent dans `site.mesure`, et tant qu'un identifiant est `null` l'outil
-  n'est ni chargé, ni proposé, ni décrit. Le `<noscript>` de GTM est volontairement omis :
-  il chargerait Google sans consentement possible. La durée des cookies `_ga` (13 mois au
-  plus) se règle dans la balise GA4 du conteneur, le code n'y a pas accès. La
+  Mesure d'audience par **Clarity seul** (`yt0x9lxpa6`). GTM a été branché puis retiré le
+  2026-10-05 à la demande du client. L'identifiant vit dans `site.mesure` : tant qu'il est
+  `null`, l'outil n'est ni chargé, ni proposé, ni décrit. Pour réintroduire GA, ne pas
+  intégrer le `<noscript>` de GTM (chargement sans consentement possible) et régler
+  `cookie_expires` à 13 mois dans la balise GA4. La
   liste `src/data/services.ts` alimente à la fois le bandeau et la politique de
   confidentialité. La carte Google Maps est créée **après accord seulement** : en iframe
   servie au rendu, elle déposait des cookies que la politique niait. Choix conservé

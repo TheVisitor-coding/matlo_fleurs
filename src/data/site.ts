@@ -65,8 +65,6 @@ export const site = {
   // Tant qu'un identifiant manque, l'outil n'est ni chargé, ni proposé dans le
   // bandeau de consentement, ni décrit dans la politique de confidentialité.
   mesure: {
-    // Conteneur qui porte la balise Google Analytics.
-    googleTagManager: 'GTM-KP8B54SZ' as string | null,
     clarity: 'yt0x9lxpa6' as string | null,
   },
 
