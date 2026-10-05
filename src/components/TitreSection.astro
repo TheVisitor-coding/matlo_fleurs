@@ -9,6 +9,8 @@ interface Props {
   disposition?: 'empile' | 'ligne';
   /** Sur fond nuit, l'accent passe en sauge claire. */
   inverse?: boolean;
+  /** `p` pour un titre décoratif qui n'ouvre aucune section, comme le bandeau. */
+  balise?: 'h2' | 'p';
   [attribut: string]: unknown;
 }
 
@@ -19,6 +21,7 @@ const {
   alignement = 'centre',
   disposition = 'empile',
   inverse = false,
+  balise: Balise = 'h2',
   ...attrs
 } = Astro.props;
 
@@ -32,8 +35,8 @@ const classes = [
   .join(' ');
 ---
 
-<h2 class={classes} {...attrs}>
-  <span>{ligne1}</span>
+<Balise class={classes} {...attrs}>
+  <span>{ligne1}</span>{' '}
   {
     ligne2 && (
       <span class={styleLigne2 === 'script' ? 'accent titre-section__script' : 'titre-section__accent'}>
@@ -41,9 +44,21 @@ const classes = [
       </span>
     )
   }
-</h2>
+</Balise>
 
 <style>
+  /* Toute la typographie des titres vient de la règle globale `h2`, que le
+     `p` ne reçoit pas, et la règle `p` lui imposerait sa marge et sa largeur. */
+  p.titre-section {
+    margin: 0;
+    max-width: none;
+    font-family: var(--famille-titre);
+    font-size: var(--taille-h2);
+    font-weight: var(--graisse-normale);
+    line-height: var(--interligne-titre);
+    letter-spacing: var(--interlettrage-titre);
+  }
+
   .titre-section--empile {
     display: flex;
     flex-direction: column;
@@ -51,10 +66,6 @@ const classes = [
 
   .titre-section--ligne {
     display: block;
-  }
-
-  .titre-section--ligne span + span {
-    margin-left: 0.3em;
   }
 
   .titre-section--centre {

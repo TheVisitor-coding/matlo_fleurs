@@ -19,6 +19,14 @@ export const site = {
     ligne1: '30 rue de Saint-Jean-de-Monts',
     codePostal: '85300',
     ville: 'Challans',
+    region: 'Pays de la Loire',
+  },
+
+  // Numéro 30 localisé par OpenStreetMap. À caler sur le repère de la fiche
+  // Google si les deux divergent : c'est elle que le JSON-LD doit recouper.
+  geo: {
+    latitude: 46.84453,
+    longitude: -1.8866,
   },
 
   telephone: {
@@ -59,7 +67,7 @@ export const site = {
 
   reseaux: {
     instagram: 'https://www.instagram.com/matlofleurs/',
-    facebook: null,
+    facebook: 'https://www.facebook.com/profile.php?id=61591860977655',
   },
 
   // Tant qu'un identifiant manque, l'outil n'est ni chargé, ni proposé dans le

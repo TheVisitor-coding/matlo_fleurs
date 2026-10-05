@@ -1,6 +1,7 @@
 ---
 import RoseEtoiles from '../assets/logo/rose-etoiles.svg';
 import IconeInstagram from '../assets/icones/instagram.svg';
+import IconeFacebook from '../assets/icones/facebook.svg';
 import EtoilePied from '../assets/decors/etoile-pied.svg';
 import ArchesDecoratives from '../assets/decors/arches-decoratives.svg';
 import { site } from '../data/site';
@@ -24,6 +25,12 @@ const annee = new Date().getFullYear();
         <a class="pied__reseau" href={site.reseaux.instagram} rel="me noopener" target="_blank">
           <IconeInstagram class="pied__icone" aria-hidden="true" />
           Instagram
+        </a>
+      </li>
+      <li>
+        <a class="pied__reseau" href={site.reseaux.facebook} rel="me noopener" target="_blank">
+          <IconeFacebook class="pied__icone" aria-hidden="true" />
+          Facebook
         </a>
       </li>
     </ul>

@@ -1,7 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import { site } from '../data/site';
-import { florist } from '../lib/schema';
+import { graphe } from '../lib/schema';
 import Consentement from '../components/Consentement.astro';
 import '../styles/base.css';
 
@@ -20,7 +20,7 @@ const { titre, description, chemin, donneesStructurees = false, noindex = false 
 const canonique = new URL(chemin, Astro.site).href.replace(/\/$/, '') || Astro.site!.href;
 // Une URL absolue est obligatoire : les réseaux ne résolvent pas les chemins relatifs.
 const partage = new URL('/og-image.png', Astro.site).href;
-const schema = donneesStructurees ? florist(canonique) : null;
+const schema = donneesStructurees ? graphe(canonique) : null;
 ---
 
 <!doctype html>

@@ -20,12 +20,11 @@ const telephone = site.telephone.lien;
 <section class="hero">
   <div class="hero__wrapper">
     <div class="hero__texte">
-      <p class="label hero__surtitre">
-        <EtoileSurtitre class="hero__etoile-surtitre" aria-hidden="true" />
-        Artisan fleuriste à Challans
-      </p>
-
       <h1 class="hero__titre">
+        <span class="label hero__surtitre">
+          <EtoileSurtitre class="hero__etoile-surtitre" aria-hidden="true" />
+          Artisan fleuriste à Challans
+        </span>{' '}
         <span class="hero__titre-ligne">Des compositions florales</span>{' '}
         <span class="hero__titre-accent">
           <span class="hors-ecran">façonnées à la main</span>
@@ -111,13 +110,18 @@ const telephone = site.telephone.lien;
     container-type: inline-size;
   }
 
+  /* Logé dans le h1 pour que le titre porte « fleuriste » et « Challans », la
+     requête principale de la page. Il reprend donc ce que le h1 écrase : la
+     graisse, l'interligne du corps et l'écart que lui donnait le gap de la
+     colonne. */
   .hero__surtitre {
     display: flex;
     align-items: center;
     gap: 4px;
-    margin: 0;
-    max-width: none;
+    margin-block-end: var(--espace-3);
     font-size: var(--taille-surtitre);
+    font-weight: var(--graisse-corps);
+    line-height: var(--interligne-corps);
   }
 
   .hero__etoile-surtitre {
