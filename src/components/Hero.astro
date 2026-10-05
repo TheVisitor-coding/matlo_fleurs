@@ -1,10 +1,10 @@
 ---
 import Arche from './Arche.astro';
 import Bouton from './Bouton.astro';
-import EtoileSurtitre from '../assets/etoile-surtitre.svg';
-import EtoileInfo from '../assets/etoile-info.svg';
-import Tulipe from '../assets/tulipe.svg';
-import photo from '../assets/hero-photo.png';
+import EtoileSurtitre from '../assets/decors/etoile-surtitre.svg';
+import EtoileInfo from '../assets/decors/etoile-info.svg';
+import Tulipe from '../assets/decors/tulipe.svg';
+import photo from '../assets/photos/fleuriste-sourire.webp';
 import { site } from '../data/site';
 
 const atouts = [
@@ -26,12 +26,10 @@ const telephone = site.telephone.lien;
       </p>
 
       <h1 class="hero__titre">
-        <span class="hero__titre-ligne">Des compositions florales,</span>{' '}
+        <span class="hero__titre-ligne">Des compositions florales</span>{' '}
         <span class="hero__titre-accent">
           <span class="hors-ecran">façonnées à la main</span>
           <picture>
-            {/* L'animation est en SMIL, que le CSS n'atteint pas : le mouvement
-                réduit passe donc par une seconde image, déjà tracée. */}
             <source srcset="/signature-statique.svg" media="(prefers-reduced-motion: reduce)" />
             <img
               class="hero__signature"
@@ -46,7 +44,7 @@ const telephone = site.telephone.lien;
       </h1>
 
       <p class="hero__chapo">
-        Au {site.adresse.ligne1}, à {site.adresse.ville}, nous composons chaque jour des
+        Au {site.adresse.ligne1} à {site.adresse.ville}, nous composons chaque jour des
         bouquets, des compositions et des créations en fleurs séchées, au rythme des saisons.
         Pour un mariage, un deuil ou simplement pour le plaisir d'offrir.
       </p>

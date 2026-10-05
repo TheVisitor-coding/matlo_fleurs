@@ -1,5 +1,5 @@
 ---
-import Etoile from '../assets/etoile.svg';
+import Etoile from '../assets/decors/etoile.svg';
 
 interface Props {
   variante?: 'primaire' | 'secondaire';
@@ -13,6 +13,11 @@ interface Props {
       a pas assez de contraste (docs/04 partie D). Sans effet sur `primaire`,
       déjà lisible sur fond nuit (panneau mobile du header). */
   inverse?: boolean;
+  /** `submit` pour un bouton de formulaire ; sans effet sur un `href`. */
+  type?: 'button' | 'submit';
+  /** Par défaut, un bouton sans `href` est désactivé (cas du tél. manquant).
+      Un bouton de formulaire doit passer `disabled={false}` explicitement. */
+  disabled?: boolean;
 }
 
 const {
@@ -23,10 +28,11 @@ const {
   pleineLargeur = false,
   externe = false,
   inverse = false,
+  type = 'button',
+  disabled = !href,
+  ...rest
 } = Astro.props;
 
-// Un href signifie une navigation : c'est un lien. Sans href il n'y a rien à
-// suivre, donc un bouton, désactivé tant que le numéro réel manque.
 const Balise = href ? 'a' : 'button';
 const classes = [
   'bouton',
@@ -42,10 +48,11 @@ const classes = [
 <Balise
   class={classes}
   href={href}
-  type={href ? undefined : 'button'}
-  disabled={href ? undefined : true}
+  type={href ? undefined : type}
+  disabled={href ? undefined : disabled}
   target={href && externe ? '_blank' : undefined}
   rel={href && externe ? 'noopener' : undefined}
+  {...rest}
 >
   <span class="bouton__cadre">
     {etoiles && <Etoile class="bouton__etoile" aria-hidden="true" />}
@@ -70,6 +77,7 @@ const classes = [
 
   .bouton:disabled {
     cursor: default;
+    opacity: 0.4;
   }
 
   .bouton--pleine-largeur {
@@ -116,6 +124,15 @@ const classes = [
   .bouton--primaire {
     background: var(--couleur-nuit);
     color: var(--couleur-blanc);
+  }
+
+  a.bouton--primaire {
+    transition: background-color var(--duree-moyenne) var(--easing-sortie);
+  }
+
+  a.bouton--primaire:hover,
+  a.bouton--primaire:focus-visible {
+    background: var(--couleur-sauge);
   }
 
   .bouton--secondaire {

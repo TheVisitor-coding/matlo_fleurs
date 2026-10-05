@@ -1,4 +1,4 @@
-import { site } from '../data/site';
+import { site, adresseRequete } from '../data/site.ts';
 
 const JOURS_SCHEMA = [
   'Monday',
@@ -48,6 +48,7 @@ export function florist(url: string) {
       addressCountry: 'FR',
     },
     openingHoursSpecification: plagesOuverture(),
+    hasMap: `https://www.google.com/maps?q=${adresseRequete}`,
     areaServed: [site.adresse.ville, ...site.livraison.communes].map((commune) => ({
       '@type': 'City',
       name: commune,

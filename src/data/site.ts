@@ -76,4 +76,11 @@ export const site = {
 export const adresseComplete = `${site.adresse.ligne1}\n${site.adresse.codePostal} ${site.adresse.ville}`;
 
 // Sans code postal, réservée à la barre d'information faute de place.
-export const adresseCourte = `${site.adresse.ligne1}, ${site.adresse.ville}`;
+export const adresseCourte = `${site.adresse.ligne1} à ${site.adresse.ville}`;
+
+// Adresse seule (pas le nom du commerce) : fiable pour pointer la carte et le
+// JSON-LD même si la fiche Google Business tout juste recréée n'est pas
+// encore indexée sous son nom.
+export const adresseRequete = encodeURIComponent(
+  `${site.adresse.ligne1}, ${site.adresse.codePostal} ${site.adresse.ville}`,
+);

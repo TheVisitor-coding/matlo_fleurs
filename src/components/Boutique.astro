@@ -1,17 +1,16 @@
 ---
-import { Image } from 'astro:assets';
 import TitreSection from './TitreSection.astro';
 import Bouton from './Bouton.astro';
-import IconeAdresse from '../assets/icone-adresse.svg';
-import IconeHoraires from '../assets/icone-horaires.svg';
-import IconeTelephone from '../assets/icone-telephone.svg';
-import carte from '../assets/carte-placeholder.png';
-import { site } from '../data/site';
+import IconeAdresse from '../assets/icones/adresse.svg';
+import IconeHoraires from '../assets/icones/horaires.svg';
+import IconeTelephone from '../assets/icones/telephone.svg';
+import { site, adresseRequete } from '../data/site';
 
 const requete = encodeURIComponent(
   `${site.nom}, ${site.adresse.ligne1}, ${site.adresse.codePostal} ${site.adresse.ville}`,
 );
 const plan = `https://www.google.com/maps/search/?api=1&query=${requete}`;
+const carteEmbed = `https://www.google.com/maps?q=${adresseRequete}&output=embed`;
 ---
 
 <section class="boutique" id={site.ancres.boutique.slice(1)}>
@@ -20,15 +19,13 @@ const plan = `https://www.google.com/maps/search/?api=1&query=${requete}`;
 
     <div class="boutique__colonnes">
       <div class="boutique__carte">
-        <Image
-          class="boutique__carte-image"
-          src={carte}
-          alt={`Plan de situation de la boutique, ${site.adresse.ligne1} à ${site.adresse.ville}`}
-          width={1144}
-          widths={[572, 1144]}
-          sizes="(max-width: 899px) 92vw, 572px"
+        <iframe
+          class="boutique__carte-iframe"
+          src={carteEmbed}
+          title={`Carte de situation de la boutique, ${site.adresse.ligne1} à ${site.adresse.ville}`}
           loading="lazy"
-        />
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
         <span class="boutique__plan">
           <Bouton href={plan} externe>Ouvrir le plan</Bouton>
         </span>
@@ -114,10 +111,10 @@ const plan = `https://www.google.com/maps/search/?api=1&query=${requete}`;
     overflow: hidden;
   }
 
-  .boutique__carte-image {
+  .boutique__carte-iframe {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    border: 0;
   }
 
   .boutique__plan {
@@ -191,6 +188,12 @@ const plan = `https://www.google.com/maps/search/?api=1&query=${requete}`;
     font-size: var(--taille-telephone);
     color: var(--texte);
     text-decoration: none;
+    transition: color var(--duree-moyenne) var(--easing-sortie);
+  }
+
+  .boutique__tel:hover,
+  .boutique__tel:focus-visible {
+    color: var(--texte-accent);
   }
 
   @media (max-width: 899px) {

@@ -1,5 +1,5 @@
 ---
-import Etoile from '../assets/etoile.svg';
+import Bouton from './Bouton.astro';
 
 const demandes = [
   'Un bouquet, une composition',
@@ -68,11 +68,9 @@ const demandes = [
   </p>
 
   <div class="formulaire__envoi">
-    <button class="formulaire__bouton" type="submit" aria-describedby="formulaire-rgpd">
-      <Etoile class="formulaire__etoile" aria-hidden="true" />
-      <span>Envoyer</span>
-      <Etoile class="formulaire__etoile" aria-hidden="true" />
-    </button>
+    <Bouton type="submit" disabled={false} taille="moyenne" aria-describedby="formulaire-rgpd">
+      Envoyer
+    </Bouton>
 
     <p class="formulaire__rgpd" id="formulaire-rgpd">
       Vos coordonnées servent uniquement à répondre à votre demande. Elles ne sont ni revendues
@@ -160,30 +158,6 @@ const demandes = [
     flex-direction: column;
     gap: var(--espace-2);
     align-items: flex-start;
-  }
-
-  .formulaire__bouton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    min-height: 44px;
-    padding: 16px var(--espace-4);
-    background: var(--couleur-nuit);
-    border: var(--arche-filet) solid var(--couleur-sauge);
-    outline-offset: 6px;
-    color: var(--couleur-creme);
-    font-family: var(--famille-titre);
-    font-size: var(--taille-bouton-moyenne);
-    letter-spacing: var(--interlettrage-titre);
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-
-  .formulaire__etoile {
-    flex: none;
-    width: 9px;
-    height: 9px;
   }
 
   .formulaire__rgpd {

@@ -3,7 +3,10 @@ import { Image } from 'astro:assets';
 import TitreSection from './TitreSection.astro';
 import Bouton from './Bouton.astro';
 import { site } from '../data/site';
-import photo from '../assets/occasion-placeholder.png';
+import photoMariage from '../assets/photos/bouquet-seche-main.webp';
+import photoDeuil from '../assets/provisoires/occasion-deuil.webp';
+import photoEvenement from '../assets/provisoires/occasion-evenement.webp';
+import photoAbonnement from '../assets/provisoires/occasion-abonnement.webp';
 
 const telephone = site.telephone.lien;
 
@@ -12,26 +15,30 @@ const occasions = [
     nom: 'Mariage',
     texte:
       'Le bouquet, les boutonnières et les fleurs des mariés, composés avec vous, pour le jour J.',
-    alt: 'Bouquet de mariée aux tons pastel tenu devant une robe blanche',
+    photo: photoMariage,
+    alt: 'Bouquet champêtre aux tons pastel tenu à bout de bras dans un jardin',
   },
   {
     nom: 'Deuil',
     ancre: site.ancres.deuil.slice(1),
     texte:
       "Nous composons et livrons au funérarium, à l'église, crématorium ou au cimetière, à Challans et dans les communes alentour.",
-    alt: 'Composition florale de deuil en fleurs de saison',
+    photo: photoDeuil,
+    alt: "Gerbe de roses, gerberas et giroflées blanches nouée d'un ruban de toile de jute",
   },
   {
     nom: 'Évènement',
     texte:
       "Des compositions pour vos tables et vos lieux, à votre image. Dites-nous la date, le nombre de tables et l'ambiance, nous composons en fleurs de saison.",
-    alt: 'Centre de table fleuri pour une réception',
+    photo: photoEvenement,
+    alt: "Bouquet blanc et rose en vase de verre, près d'un cadeau emballé de kraft",
   },
   {
     nom: 'Abonnement',
     texte:
       'Des fleurs fraîches renouvelées chaque semaine chez vous, chez un proche ou dans un établissement. Vous choisissez le rythme et le budget, nous adaptons à la saison.',
-    alt: "Bouquet d'abonnement en fleurs de saison posé sur une table",
+    photo: photoAbonnement,
+    alt: 'Bouquet de roses rouges et roses tendu de la main à la main',
   },
 ];
 ---
@@ -54,7 +61,7 @@ const occasions = [
           <li class="occasions__carte" id={occasion.ancre} data-reveal style={`--reveal-index:${index}`}>
             <Image
               class="occasions__photo"
-              src={photo}
+              src={occasion.photo}
               alt={occasion.alt}
               width={620}
               widths={[310, 620]}

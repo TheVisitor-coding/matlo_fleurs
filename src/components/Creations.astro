@@ -2,9 +2,9 @@
 import Arche from './Arche.astro';
 import TitreSection from './TitreSection.astro';
 import { site } from '../data/site';
-import bouquets from '../assets/creation-bouquets.png';
-import fleursSechees from '../assets/creation-fleurs-sechees.png';
-import plantes from '../assets/creation-plantes.png';
+import bouquets from '../assets/provisoires/creation-bouquets.png';
+import fleursSechees from '../assets/photos/cloche-fleurs-sechees.webp';
+import plantes from '../assets/photos/fleuriste-plantes.webp';
 
 const univers = [
   {
@@ -33,7 +33,7 @@ const univers = [
 
 <section class="creations" id={site.ancres.creations.slice(1)}>
   <div class="creations__wrapper">
-    <TitreSection ligne1="Nos créations, composées" ligne2="chaque jour à l'atelier" data-reveal />
+    <TitreSection ligne1="Nos créations composées" ligne2="chaque jour à l'atelier" data-reveal />
 
     <ul class="creations__liste">
       {

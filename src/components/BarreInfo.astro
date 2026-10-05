@@ -78,7 +78,9 @@ const horaires = site.horaires.map((j) => ({ iso: j.iso, plages: j.plages }));
 
   .barre-info__tel:hover,
   .barre-info__tel:focus-visible {
-    text-decoration: underline;
+    /* sauge normale : pas assez de contraste sur le fond nuit de la barre,
+       comme documenté sur --couleur-sauge-claire dans tokens.css. */
+    color: var(--texte-accent-inverse);
   }
 
   /* L'adresse tombe, l'horaire et le téléphone restent. */
