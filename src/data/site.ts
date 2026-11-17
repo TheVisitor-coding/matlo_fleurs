@@ -43,8 +43,8 @@ export const site = {
     { jour: 'Mardi', plages: ['9h-12h30', '14h30-19h'], iso: 2 },
     { jour: 'Mercredi', plages: ['9h-12h30', '14h30-19h'], iso: 3 },
     { jour: 'Jeudi', plages: ['9h-12h30', '14h30-19h'], iso: 4 },
-    { jour: 'Vendredi', plages: ['9h-12h30', '14h30-19h30'], iso: 5 },
-    { jour: 'Samedi', plages: ['9h-12h30', '15h-19h30'], iso: 6 },
+    { jour: 'Vendredi', plages: ['9h-12h30', '14h30-19h'], iso: 5 },
+    { jour: 'Samedi', plages: ['9h-12h30', '15h-19h'], iso: 6 },
     { jour: 'Dimanche', plages: ['9h-12h30'], iso: 7 },
   ] as const satisfies readonly PlageHoraire[],
 

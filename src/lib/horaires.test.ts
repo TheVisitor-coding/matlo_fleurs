@@ -8,8 +8,8 @@ const HORAIRES: JourOuverture[] = [
   { iso: 2, plages: ['9h-12h30', '14h30-19h'] },
   { iso: 3, plages: ['9h-12h30', '14h30-19h'] },
   { iso: 4, plages: ['9h-12h30', '14h30-19h'] },
-  { iso: 5, plages: ['9h-12h30', '14h30-19h30'] },
-  { iso: 6, plages: ['9h-12h30', '15h-19h30'] },
+  { iso: 5, plages: ['9h-12h30', '14h30-19h'] },
+  { iso: 6, plages: ['9h-12h30', '15h-19h'] },
   { iso: 7, plages: ['9h-12h30'] },
 ];
 
@@ -42,8 +42,8 @@ test('après la fermeture, renvoie au lendemain', () => {
   assert.equal(phrase('2026-09-01T20:00:00+02:00'), "Fermé aujourd'hui · ouvert demain à 9h");
 });
 
-test('vendredi ferme à 19h30, pas à 19h', () => {
-  assert.equal(phrase('2026-09-04T19:15:00+02:00'), "Ouvert aujourd'hui jusqu'à 19h30");
+test('vendredi ferme à 19h comme le reste de la semaine, plus à 19h30', () => {
+  assert.equal(phrase('2026-09-04T19:15:00+02:00'), "Fermé aujourd'hui · ouvert demain à 9h");
 });
 
 test('samedi rouvre à 15h, pas à 14h30', () => {

@@ -624,8 +624,8 @@ Lundi        fermé
 Mardi        9h-12h30 · 14h30-19h
 Mercredi     9h-12h30 · 14h30-19h
 Jeudi        9h-12h30 · 14h30-19h
-Vendredi     9h-12h30 · 14h30-19h30
-Samedi       9h-12h30 · 15h-19h30
+Vendredi     9h-12h30 · 14h30-19h
+Samedi       9h-12h30 · 15h-19h
 Dimanche     9h-12h30
 ```
 
@@ -636,6 +636,9 @@ Dimanche     9h-12h30
 précédentes de ce document et de `04-page-accueil.md` étaient fausses sur **six jours
 sur sept** : la coupure de midi est à **12h30**, pas à 13h. Le vendredi ferme à 19h30,
 le samedi rouvre à 15h et ferme à 19h30, le dimanche ferme à 12h30.
+
+**[modifié 2026-11-17]** Le vendredi et le samedi ferment désormais à **19h**, comme le
+reste de la semaine. Le samedi rouvre toujours à 15h.
 
 Ces horaires sont désormais portés par `src/data/site.ts`, qui alimente le block
 boutique, la barre d'information et le `openingHoursSpecification` du schema. Ils
